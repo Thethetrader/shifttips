@@ -24,7 +24,11 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      setError("Email ou mot de passe incorrect.");
+      if (error.message.toLowerCase().includes("email") && error.message.toLowerCase().includes("confirm")) {
+        setError("Confirme ton email avant de te connecter. Vérifie ta boîte mail.");
+      } else {
+        setError("Email ou mot de passe incorrect.");
+      }
       setLoading(false);
       return;
     }
