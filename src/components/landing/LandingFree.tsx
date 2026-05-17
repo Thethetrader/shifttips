@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import Link from "next/link";
+import InstallPWAButton from "@/components/landing/InstallPWAButton";
 
 const features = [
   "Calendrier mensuel visuel",
@@ -38,12 +39,18 @@ export default function LandingFree() {
                 ShiftTips est gratuit et sans pub. Pas d&apos;abonnement, pas de version premium cachée.
                 Ton revenu mérite d&apos;être visible sans frais supplémentaires.
               </p>
-              <Link
-                href="/signup"
-                className="inline-flex h-14 px-8 bg-white text-emerald font-semibold text-base rounded-2xl items-center transition-all active:scale-[0.98] hover:bg-cream shadow-[0_8px_24px_rgba(0,0,0,0.15)]"
-              >
-                Commencer gratuitement
-              </Link>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href="/signup"
+                  className="inline-flex h-14 px-8 bg-white text-emerald font-semibold text-base rounded-2xl items-center transition-all active:scale-[0.98] hover:bg-cream shadow-[0_8px_24px_rgba(0,0,0,0.15)]"
+                >
+                  Commencer gratuitement
+                </Link>
+                <InstallPWAButton
+                  label="📲 Télécharger l'app"
+                  className="inline-flex h-14 px-8 bg-white/15 text-white font-semibold text-base rounded-2xl items-center transition-all active:scale-[0.98] hover:bg-white/25"
+                />
+              </div>
             </div>
 
             <div className="flex flex-col gap-2 min-w-[220px]">

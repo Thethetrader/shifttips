@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import InstallPWAButton from "@/components/landing/InstallPWAButton";
 
 function CalendarPhone() {
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -191,12 +192,10 @@ export default function LandingHero() {
               >
                 Commencer gratuitement
               </Link>
-              <Link
-                href="/login"
-                className="h-[54px] px-8 text-ink-muted font-medium text-[15px] rounded-2xl flex items-center justify-center transition-all hover:text-ink"
-              >
-                J&rsquo;ai déjà un compte →
-              </Link>
+              <InstallPWAButton
+                label="📲 Télécharger l'app"
+                className="h-[54px] px-8 bg-ink/5 text-ink font-semibold text-[15px] rounded-2xl flex items-center justify-center transition-all active:scale-[0.97] hover:bg-ink/10"
+              />
             </motion.div>
 
             <motion.div

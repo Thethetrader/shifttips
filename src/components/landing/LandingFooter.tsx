@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import InstallPWAButton from "@/components/landing/InstallPWAButton";
 
 export default function LandingFooter() {
   return (
@@ -13,12 +16,18 @@ export default function LandingFooter() {
             </h3>
             <p className="text-white/50 text-sm">Gratuit. 30 secondes pour s&rsquo;inscrire.</p>
           </div>
-          <Link
-            href="/signup"
-            className="inline-flex h-12 px-7 bg-emerald text-white font-medium text-sm rounded-xl items-center transition-all hover:bg-emerald-light shadow-[0_4px_16px_rgba(15,81,50,0.4)] flex-shrink-0"
-          >
-            Commencer gratuitement
-          </Link>
+          <div className="flex flex-wrap gap-3 flex-shrink-0">
+            <Link
+              href="/signup"
+              className="inline-flex h-12 px-7 bg-emerald text-white font-medium text-sm rounded-xl items-center transition-all hover:bg-emerald-light shadow-[0_4px_16px_rgba(15,81,50,0.4)]"
+            >
+              Commencer gratuitement
+            </Link>
+            <InstallPWAButton
+              label="📲 Télécharger l'app"
+              className="inline-flex h-12 px-7 bg-white/10 text-white font-medium text-sm rounded-xl items-center transition-all hover:bg-white/20"
+            />
+          </div>
         </div>
 
         {/* Bottom bar */}
