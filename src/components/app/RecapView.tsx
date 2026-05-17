@@ -85,7 +85,7 @@ export default function RecapView({ shifts, prevShifts, profile, currentMonth }:
   const prevTotalTips = calcTotalTips(prevShifts);
 
   const overtimeHours = calcOvertimeHours(totalHours, profile.weekly_hours);
-  const theoreticalRestDays = calcTheoreticalRestDays(profile.weekly_rest_days);
+  const theoreticalRestDays = calcTheoreticalRestDays(profile.weekly_rest_days, totalHours, profile.weekly_hours);
   const workedDays = shifts.length;
   const daysInMonth = getDaysInMonth(currentMonth);
   const restTaken = daysInMonth - workedDays;

@@ -16,8 +16,16 @@ export function calcOvertimeHours(
   return Math.max(0, totalHoursWorked - monthlyContractHours(weeklyContractHours));
 }
 
-export function calcTheoreticalRestDays(weeklyRestDays: number): number {
-  return Math.round(weeklyRestDays * WEEKS_PER_MONTH);
+// Repos proportionnel aux semaines effectivement travaillées (Art. L3132-2 + Conv. HCR)
+// weeksWorked = totalHoursWorked / weeklyContractHours
+export function calcTheoreticalRestDays(
+  weeklyRestDays: number,
+  totalHoursWorked: number,
+  weeklyContractHours: number,
+): number {
+  if (weeklyContractHours <= 0) return 0;
+  const weeksWorked = totalHoursWorked / weeklyContractHours;
+  return Math.round(weeksWorked * weeklyRestDays);
 }
 
 export function calcWorkedDays(shifts: Shift[]): number {
