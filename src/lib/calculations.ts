@@ -1,37 +1,23 @@
-import {
-  getISOWeek,
-  startOfMonth,
-  endOfMonth,
-  eachDayOfInterval,
-} from "date-fns";
 import type { Shift } from "@/lib/supabase/types";
 
-export function getWeeksInMonth(year: number, month: number): number {
-  const start = startOfMonth(new Date(year, month, 1));
-  const end = endOfMonth(new Date(year, month, 1));
-  const days = eachDayOfInterval({ start, end });
-  const weeks = new Set(days.map((d) => getISOWeek(d)));
-  return weeks.size;
+// Mensualisation légale (Art. L3242-1 Code du travail) :
+// heures mensuelles = heures hebdo × 52 / 12
+// Valable pour tout contrat (CDI, CDD, extra, 20h, 35h, 39h, 42h…)
+const WEEKS_PER_MONTH = 52 / 12;
+
+export function monthlyContractHours(weeklyHours: number): number {
+  return weeklyHours * WEEKS_PER_MONTH;
 }
 
 export function calcOvertimeHours(
   totalHoursWorked: number,
   weeklyContractHours: number,
-  year: number,
-  month: number
 ): number {
-  const weeks = getWeeksInMonth(year, month);
-  const contractHoursForMonth = weeklyContractHours * weeks;
-  return Math.max(0, totalHoursWorked - contractHoursForMonth);
+  return Math.max(0, totalHoursWorked - monthlyContractHours(weeklyContractHours));
 }
 
-export function calcTheoreticalRestDays(
-  weeklyRestDays: number,
-  year: number,
-  month: number
-): number {
-  const weeks = getWeeksInMonth(year, month);
-  return weeklyRestDays * weeks;
+export function calcTheoreticalRestDays(weeklyRestDays: number): number {
+  return Math.round(weeklyRestDays * WEEKS_PER_MONTH);
 }
 
 export function calcWorkedDays(shifts: Shift[]): number {

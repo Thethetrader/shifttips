@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { format, getDaysInMonth, eachDayOfInterval, startOfMonth, endOfMonth, getISODay } from "date-fns";
+import { format, getDaysInMonth } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
   BarChart,
@@ -12,7 +12,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import type { Shift, ScheduleTemplate } from "@/lib/supabase/types";
+import type { Shift } from "@/lib/supabase/types";
 import {
   calcTotalHours,
   calcTotalTips,
@@ -21,12 +21,13 @@ import {
   calcChangePercent,
   formatHours,
   formatTips,
+  monthlyContractHours,
 } from "@/lib/calculations";
 
 interface Props {
   shifts: Shift[];
   prevShifts: Shift[];
-  profile: { weekly_hours: number; weekly_rest_days: number; contract_type: string | null; schedule_template?: ScheduleTemplate | null };
+  profile: { weekly_hours: number; weekly_rest_days: number; contract_type: string | null };
   currentMonth: Date;
 }
 
@@ -83,8 +84,8 @@ export default function RecapView({ shifts, prevShifts, profile, currentMonth }:
   const prevTotalHours = calcTotalHours(prevShifts);
   const prevTotalTips = calcTotalTips(prevShifts);
 
-  const overtimeHours = calcOvertimeHours(totalHours, profile.weekly_hours, year, month);
-  const theoreticalRestDays = calcTheoreticalRestDays(profile.weekly_rest_days, year, month);
+  const overtimeHours = calcOvertimeHours(totalHours, profile.weekly_hours);
+  const theoreticalRestDays = calcTheoreticalRestDays(profile.weekly_rest_days);
   const workedDays = shifts.length;
   const daysInMonth = getDaysInMonth(currentMonth);
   const restTaken = daysInMonth - workedDays;
@@ -92,21 +93,8 @@ export default function RecapView({ shifts, prevShifts, profile, currentMonth }:
   const tipsChange = calcChangePercent(totalTips, prevTotalTips);
   const hoursChange = calcChangePercent(totalHours, prevTotalHours);
 
-  // Planned hours from schedule template
-  const plannedHours = (() => {
-    const tpl = profile.schedule_template;
-    if (!tpl || Object.keys(tpl).length === 0) return null;
-    const days = eachDayOfInterval({ start: startOfMonth(currentMonth), end: endOfMonth(currentMonth) });
-    return days.reduce((sum, day) => {
-      const entry = tpl[String(getISODay(day))];
-      if (!entry) return sum;
-      const [sh, sm] = entry.start.split(":").map(Number);
-      const [eh, em] = entry.end.split(":").map(Number);
-      let h = (eh + em / 60) - (sh + sm / 60);
-      if (h < 0) h += 24; // shifts après minuit
-      return sum + h;
-    }, 0);
-  })();
+  // Heures prévues = mensualisation légale (hebdo × 52/12)
+  const plannedHours = monthlyContractHours(profile.weekly_hours);
 
   // Chart data: tips per day of month
   const chartData = Array.from({ length: daysInMonth }, (_, i) => {
@@ -163,8 +151,7 @@ export default function RecapView({ shifts, prevShifts, profile, currentMonth }:
       </div>
 
       {/* Planning vs réel */}
-      {plannedHours !== null && (
-        <motion.div
+      <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.28 }}
@@ -203,7 +190,6 @@ export default function RecapView({ shifts, prevShifts, profile, currentMonth }:
             {plannedHours > 0 ? `${Math.round((totalHours / plannedHours) * 100)}% du planning réalisé` : ""}
           </p>
         </motion.div>
-      )}
 
       {/* Pourboires chart */}
       <motion.div

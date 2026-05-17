@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
@@ -76,8 +77,8 @@ export default function SignupPage() {
         className="w-full max-w-sm"
       >
         <Link href="/" className="flex items-center gap-2 mb-10">
-          <div className="w-8 h-8 rounded-lg bg-emerald flex items-center justify-center">
-            <span className="text-white font-bold text-sm">S</span>
+          <div className="w-8 h-8 rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(15,81,50,0.15)] bg-white flex-shrink-0">
+            <Image src="/logo.jpg" alt="ShiftTips" width={32} height={32} className="w-full h-full object-contain" />
           </div>
           <span className="font-semibold text-ink tracking-tight">ShiftTips</span>
         </Link>
