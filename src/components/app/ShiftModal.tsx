@@ -42,11 +42,12 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
   const dateStr = format(date, "yyyy-MM-dd");
   const displayDate = format(date, "EEEE d MMMM", { locale: fr });
 
-  const hoursWorked = Math.max(0, timeToDecimal(endTime) - timeToDecimal(startTime));
+  const rawHours = timeToDecimal(endTime) - timeToDecimal(startTime);
+  const hoursWorked = rawHours < 0 ? rawHours + 24 : rawHours; // gère les shifts après minuit
 
   async function handleSave() {
     if (hoursWorked <= 0) {
-      setError("L'heure de fin doit être après l'heure de début.");
+      setError("La durée du service doit être supérieure à 0.");
       return;
     }
     setError(null);

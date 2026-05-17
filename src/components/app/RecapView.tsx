@@ -102,7 +102,9 @@ export default function RecapView({ shifts, prevShifts, profile, currentMonth }:
       if (!entry) return sum;
       const [sh, sm] = entry.start.split(":").map(Number);
       const [eh, em] = entry.end.split(":").map(Number);
-      return sum + (eh + em / 60) - (sh + sm / 60);
+      let h = (eh + em / 60) - (sh + sm / 60);
+      if (h < 0) h += 24; // shifts après minuit
+      return sum + h;
     }, 0);
   })();
 
