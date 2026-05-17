@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 export default function LandingNav() {
@@ -13,8 +14,14 @@ export default function LandingNav() {
     >
       <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-emerald flex items-center justify-center shadow-[0_2px_8px_rgba(15,81,50,0.3)]">
-            <span className="text-white font-bold text-sm leading-none">S</span>
+          <div className="w-8 h-8 rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(15,81,50,0.2)] flex-shrink-0">
+            <Image
+              src="/logo.jpg"
+              alt="ShiftTips"
+              width={32}
+              height={32}
+              className="w-full h-full object-cover"
+            />
           </div>
           <span className="font-semibold text-ink tracking-tight">ShiftTips</span>
         </Link>
