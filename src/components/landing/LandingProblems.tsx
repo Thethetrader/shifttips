@@ -37,7 +37,8 @@ function ForgottenCalendar() {
   );
 }
 
-/* ── Animation 2 : calcul qui donne un mauvais résultat ── */
+/* ── Animation 2 : calcul qui donne un mauvais résultat (unused — kept as ref) ── */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function WrongCalc() {
   const results = ["142h", "139h", "148h", "142h", "135h", "142h"];
   const [idx, setIdx] = useState(0);
@@ -78,6 +79,53 @@ function WrongCalc() {
           {results[idx]}
           {isWrong && <span className="text-sm ml-1">✗</span>}
           {!isWrong && <span className="text-sm ml-1 text-emerald-400">✓</span>}
+        </motion.span>
+      </div>
+    </div>
+  );
+}
+
+/* ── Animation 2b : calcul version claire ── */
+function WrongCalcLight() {
+  const results = ["142h", "139h", "148h", "142h", "135h", "142h"];
+  const [idx, setIdx] = useState(0);
+  const [isWrong, setIsWrong] = useState(false);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setIdx(i => {
+        const next = (i + 1) % results.length;
+        setIsWrong(next !== 0 && next !== 3 && next !== 5);
+        return next;
+      });
+    }, 1200);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div className="flex flex-col gap-3 font-mono w-[200px]">
+      {[
+        { label: "Lun–Ven", val: "22h" },
+        { label: "Week-end", val: "15h" },
+        { label: "Extras", val: "?" },
+      ].map((r) => (
+        <div key={r.label} className="flex items-center justify-between gap-6 text-sm text-ink-muted">
+          <span>{r.label}</span>
+          <span className="text-ink font-bold">{r.val}</span>
+        </div>
+      ))}
+      <div className="border-t border-gray-200 pt-3 flex items-center justify-between">
+        <span className="text-ink-muted text-sm font-mono">Total</span>
+        <motion.span
+          key={idx}
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20 }}
+          className={`text-2xl font-bold font-mono ${isWrong ? "text-red-500" : "text-emerald"}`}
+        >
+          {results[idx]}
+          {isWrong && <span className="text-sm ml-1">✗</span>}
+          {!isWrong && <span className="text-sm ml-1">✓</span>}
         </motion.span>
       </div>
     </div>
@@ -149,14 +197,14 @@ const problems = [
     headline: "Tu calcules tout à la main.",
     quote: "Encore à additionner mes heures à minuit.",
     sub: "Fin de mois, tu totalises tout de tête et tu te trompes.",
-    bg: "bg-[#1A1A18]",
-    border: "",
-    textColor: "text-white",
-    mutedColor: "text-white/50",
+    bg: "bg-gray-50",
+    border: "border-y border-gray-100",
+    textColor: "text-ink",
+    mutedColor: "text-ink-muted",
     stat: "45 min",
     statSub: "perdues chaque fin de mois",
-    statColor: "text-white",
-    animation: <WrongCalc />,
+    statColor: "text-ink",
+    animation: <WrongCalcLight />,
     reverse: true,
   },
   {

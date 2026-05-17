@@ -144,8 +144,7 @@ export default function LandingHero() {
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.14 }}
               className="text-[17px] text-ink-muted leading-[1.7] max-w-[46ch] mb-10"
             >
-              ShiftTips t&rsquo;aide à enregistrer chaque service en 3 taps —
-              et te donne le total heures, pourboires et heures sup à la fin du mois.
+              ShiftTips t&rsquo;aide à enregistrer chaque service en 3 taps et te donne le total heures, pourboires et heures sup à la fin du mois.
             </motion.p>
 
             <motion.div
