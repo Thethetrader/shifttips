@@ -6,21 +6,21 @@ import { useRef } from "react";
 const testimonials = [
   {
     name: "Camille R.",
-    role: "Serveuse — Brasserie Lipp, Paris 6e",
+    role: "Serveuse · Brasserie Lipp, Paris 6e",
     initial: "CR",
     color: "bg-emerald",
     quote: "J'avais toujours peur de rater des heures en fin de mois. Maintenant je sais exactement combien j'ai travaillé, et j'ai réalisé que mes pourboires représentaient 38 % de mon revenu réel. Ça change tout.",
   },
   {
     name: "Théo M.",
-    role: "Serveur — Hôtel Molitor",
+    role: "Serveur · Hôtel Molitor",
     initial: "TM",
     color: "bg-ink",
     quote: "L'app se souvient de tout à ma place. Le bouton pour saisir le service du jour, c'est vraiment 2 taps et c'est réglé. J'aurais jamais cru qu'une app aussi simple puisse m'économiser autant de stress.",
   },
   {
     name: "Nadia B.",
-    role: "Responsable de salle — L'Ami Jean",
+    role: "Responsable de salle · L'Ami Jean",
     initial: "NB",
     color: "bg-emerald",
     quote: "J'ai recommandé ShiftTips à toute mon équipe. La moitié calculaient leurs heures sup à la main depuis des années. Là c'est automatique, et ça a évité pas mal de tensions avec la direction.",
@@ -40,7 +40,7 @@ export default function LandingTestimonials() {
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
-    <section ref={ref} className="py-24 md:py-32 px-5 bg-cream-dark">
+    <section ref={ref} className="py-24 md:py-32 px-5 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 12 }}

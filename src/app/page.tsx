@@ -10,7 +10,7 @@ import LandingFooter from "@/components/landing/LandingFooter";
 
 export default function HomePage() {
   return (
-    <div className="bg-cream min-h-[100dvh] overflow-x-hidden">
+    <div className="bg-white min-h-[100dvh] overflow-x-hidden">
       <LandingNav />
       <LandingHero />
       <LandingProblems />

@@ -233,7 +233,7 @@ export default function LandingHowItWorks() {
   }, []);
 
   return (
-    <section ref={ref} className="py-24 md:py-32 px-5 bg-cream-dark">
+    <section ref={ref} className="py-24 md:py-32 px-5 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 14 }}

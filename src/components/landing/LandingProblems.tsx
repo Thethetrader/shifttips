@@ -22,14 +22,13 @@ function ForgottenCalendar() {
             } : {}}
             transition={forgotten ? { duration: 2, repeat: Infinity, ease: "easeInOut" } : {}}
             className={`aspect-square rounded-md flex items-center justify-center text-[9px] font-semibold
-              ${forgotten ? "bg-red-100 text-red-400 ring-1 ring-red-300" : shift ? "bg-emerald/15 text-emerald-700" : "bg-white/60 text-ink-faint"}
+              ${forgotten ? "bg-red-100 text-red-400 ring-1 ring-red-300" : shift ? "bg-emerald/15 text-emerald-700" : "bg-gray-100 text-gray-300"}
             `}
           >
             {forgotten ? (
-              <motion.span
-                animate={{ opacity: [1, 0.3, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >?</motion.span>
+              <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity }}>
+                ?
+              </motion.span>
             ) : i + 1}
           </motion.div>
         );
@@ -129,13 +128,14 @@ function TipsCounter() {
   );
 }
 
-/* ── Blocs ── */
 const problems = [
   {
     num: "01",
     headline: "Tu oublies des jours.",
-    sub: "Un jour manquant = une heure perdue sur ta fiche de paie.",
-    bg: "bg-cream",
+    quote: "J'ai oublié un jour dans mon planning.",
+    sub: "Un jour manquant sur ta fiche de paie, c'est une heure perdue.",
+    bg: "bg-white",
+    border: "border-b border-gray-100",
     textColor: "text-ink",
     mutedColor: "text-ink-muted",
     stat: "3 oublis",
@@ -146,9 +146,11 @@ const problems = [
   },
   {
     num: "02",
-    headline: "Tu calcules à la main.",
-    sub: "Fin de mois, tu additionnes tout de tête — et tu te trompes.",
+    headline: "Tu calcules tout à la main.",
+    quote: "Encore à additionner mes heures à minuit.",
+    sub: "Fin de mois, tu totalises tout de tête et tu te trompes.",
     bg: "bg-[#1A1A18]",
+    border: "",
     textColor: "text-white",
     mutedColor: "text-white/50",
     stat: "45 min",
@@ -160,8 +162,10 @@ const problems = [
   {
     num: "03",
     headline: "Tes tips disparaissent.",
+    quote: "Je vis avec mes pourboires.",
     sub: "Tu les dépenses sans jamais voir le total mensuel.",
-    bg: "bg-cream-dark",
+    bg: "bg-gray-50",
+    border: "border-t border-gray-100",
     textColor: "text-ink",
     mutedColor: "text-ink-muted",
     stat: "847 €",
@@ -176,8 +180,10 @@ export default function LandingProblems() {
   return (
     <section className="overflow-hidden">
       {problems.map((p, i) => {
-        const ref = useRef(null); // eslint-disable-line react-hooks/rules-of-hooks
-        const inView = useInView(ref, { once: true, margin: "-60px" }); // eslint-disable-line react-hooks/rules-of-hooks
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const ref = useRef(null);
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const inView = useInView(ref, { once: true, margin: "-60px" });
 
         const textBlock = (
           <motion.div
@@ -186,7 +192,13 @@ export default function LandingProblems() {
             transition={{ type: "spring", stiffness: 80, damping: 20 }}
             className="flex flex-col justify-center py-16 md:py-24 px-6 md:px-16"
           >
-            <p className={`text-xs font-semibold uppercase tracking-[0.2em] mb-6 ${p.mutedColor}`}>{p.num}</p>
+            <p className={`text-xs font-semibold uppercase tracking-[0.2em] mb-5 ${p.mutedColor}`}>{p.num}</p>
+
+            {/* Pull-quote */}
+            <p className={`text-lg font-serif italic mb-4 ${p.textColor} opacity-50`}>
+              &ldquo;{p.quote}&rdquo;
+            </p>
+
             <h2 className={`text-4xl md:text-5xl font-serif tracking-tight leading-tight mb-4 ${p.textColor}`}>
               {p.headline}
             </h2>
@@ -210,17 +222,9 @@ export default function LandingProblems() {
         );
 
         return (
-          <div
-            key={i}
-            ref={ref}
-            className={`${p.bg} border-b border-black/5`}
-          >
+          <div key={i} ref={ref} className={`${p.bg} ${p.border}`}>
             <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-[3fr_2fr]">
-              {p.reverse ? (
-                <>{animBlock}{textBlock}</>
-              ) : (
-                <>{textBlock}{animBlock}</>
-              )}
+              {p.reverse ? <>{animBlock}{textBlock}</> : <>{textBlock}{animBlock}</>}
             </div>
           </div>
         );

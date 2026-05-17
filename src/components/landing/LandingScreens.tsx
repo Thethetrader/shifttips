@@ -204,7 +204,7 @@ export default function LandingScreens() {
   const [active, setActive] = useState("calendar");
 
   return (
-    <section ref={ref} className="py-24 md:py-32 bg-[#1A1A18] overflow-hidden">
+    <section ref={ref} className="py-24 md:py-32 bg-white overflow-hidden border-y border-gray-100">
       <div className="max-w-6xl mx-auto px-5">
 
         <motion.div
@@ -213,8 +213,8 @@ export default function LandingScreens() {
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="mb-14"
         >
-          <p className="text-xs font-semibold text-white/30 uppercase tracking-[0.2em] mb-4">L&rsquo;app</p>
-          <h2 className="text-4xl md:text-5xl font-serif tracking-tight text-white leading-tight">
+          <p className="text-xs font-semibold text-ink-muted uppercase tracking-[0.2em] mb-4">L&rsquo;app</p>
+          <h2 className="text-4xl md:text-5xl font-serif tracking-tight text-ink leading-tight">
             Tout ce qu&rsquo;il te faut,
             <br />
             rien de superflu.
@@ -229,7 +229,7 @@ export default function LandingScreens() {
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.1 }}
           >
-            <div className="flex flex-col divide-y divide-white/10">
+            <div className="flex flex-col divide-y divide-gray-100">
               {SCREENS.map((s, i) => (
                 <button
                   key={s.id}
@@ -243,14 +243,14 @@ export default function LandingScreens() {
                     className="flex items-center gap-5"
                   >
                     <motion.div
-                      animate={{ backgroundColor: active === s.id ? "#0F5132" : "rgba(255,255,255,0.06)" }}
+                      animate={{ backgroundColor: active === s.id ? "#0F5132" : "rgba(0,0,0,0.05)" }}
                       className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                     >
-                      <span className={`text-xs font-bold font-mono transition-colors ${active === s.id ? "text-white" : "text-white/30"}`}>
+                      <span className={`text-xs font-bold font-mono transition-colors ${active === s.id ? "text-white" : "text-ink-muted"}`}>
                         0{i+1}
                       </span>
                     </motion.div>
-                    <span className={`font-semibold tracking-tight transition-all duration-200 ${active === s.id ? "text-white text-xl" : "text-white/40 text-base"}`}>
+                    <span className={`font-semibold tracking-tight transition-all duration-200 ${active === s.id ? "text-ink text-xl" : "text-ink-muted text-base"}`}>
                       {s.label}
                     </span>
                   </motion.div>

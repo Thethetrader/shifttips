@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function LandingFooter() {
   return (
@@ -10,7 +11,7 @@ export default function LandingFooter() {
             <h3 className="text-2xl font-serif tracking-tight mb-1">
               Commence à suivre tes pourboires.
             </h3>
-            <p className="text-white/50 text-sm">Gratuit. 30 secondes pour s&apos;inscrire.</p>
+            <p className="text-white/50 text-sm">Gratuit. 30 secondes pour s&rsquo;inscrire.</p>
           </div>
           <Link
             href="/signup"
@@ -21,22 +22,35 @@ export default function LandingFooter() {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-emerald flex items-center justify-center">
-              <span className="text-white font-bold text-xs leading-none">S</span>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl overflow-hidden bg-white/10 flex items-center justify-center flex-shrink-0">
+              <Image
+                src="/logo.jpg"
+                alt="ShiftTips"
+                width={36}
+                height={36}
+                className="w-full h-full object-contain"
+              />
             </div>
-            <span className="font-semibold text-white/80 tracking-tight text-sm">ShiftTips</span>
-          </div>
+            <div>
+              <p className="font-semibold text-white text-sm leading-none">ShiftTips</p>
+              <p className="text-white/30 text-[11px] mt-0.5">Suivi heures et pourboires</p>
+            </div>
+          </Link>
 
-          <div className="flex items-center gap-6 text-sm text-white/40">
+          <div className="flex flex-wrap items-center gap-6 text-sm text-white/40">
             <Link href="/confidentialite" className="hover:text-white/70 transition-colors">
               Confidentialité
             </Link>
             <Link href="/cgu" className="hover:text-white/70 transition-colors">
               CGU
             </Link>
-            <span>© 2026 ShiftTips</span>
+            <Link href="/contact" className="hover:text-white/70 transition-colors">
+              Contact
+            </Link>
+            <span className="text-white/20">©&nbsp;2026 ShiftTips</span>
           </div>
         </div>
       </div>

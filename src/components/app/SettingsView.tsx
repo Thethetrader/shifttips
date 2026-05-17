@@ -199,7 +199,18 @@ export default function SettingsView({ profile, userId, email }: Props) {
         >
           Se déconnecter
         </button>
-        <p className="text-center text-xs text-ink-faint mt-4">ShiftTips v1.0 — 100 % gratuit</p>
+      </div>
+
+      {/* App footer */}
+      <div className="mt-6 pt-4 border-t border-border/50 flex flex-col items-center gap-3">
+        <p className="text-xs text-ink-faint">ShiftTips · 100 % gratuit · v1.0</p>
+        <div className="flex items-center gap-4 text-[11px] text-ink-faint">
+          <a href="/confidentialite" className="hover:text-ink-muted transition-colors">Confidentialité</a>
+          <span className="text-border">·</span>
+          <a href="/cgu" className="hover:text-ink-muted transition-colors">CGU</a>
+          <span className="text-border">·</span>
+          <a href="/contact" className="hover:text-ink-muted transition-colors">Contact</a>
+        </div>
       </div>
     </div>
   );
