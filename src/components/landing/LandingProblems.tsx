@@ -1,82 +1,230 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion, useInView, animate, useMotionValue, useTransform } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
 
+/* ── Animation 1 : calendrier avec un jour qui s'efface ── */
+function ForgottenCalendar() {
+  const hasShift = [0,1,3,4,6,7,8,10,11,13,16,17,19,20,21,23,24];
+  const forgottenIdx = 14;
+
+  return (
+    <div className="grid grid-cols-7 gap-1.5 w-[160px]">
+      {Array.from({ length: 28 }, (_, i) => {
+        const shift = hasShift.includes(i);
+        const forgotten = i === forgottenIdx;
+        return (
+          <motion.div
+            key={i}
+            animate={forgotten ? {
+              backgroundColor: ["#fee2e2", "#fecaca", "#fee2e2"],
+              scale: [1, 1.08, 1],
+            } : {}}
+            transition={forgotten ? { duration: 2, repeat: Infinity, ease: "easeInOut" } : {}}
+            className={`aspect-square rounded-md flex items-center justify-center text-[9px] font-semibold
+              ${forgotten ? "bg-red-100 text-red-400 ring-1 ring-red-300" : shift ? "bg-emerald/15 text-emerald-700" : "bg-white/60 text-ink-faint"}
+            `}
+          >
+            {forgotten ? (
+              <motion.span
+                animate={{ opacity: [1, 0.3, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >?</motion.span>
+            ) : i + 1}
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ── Animation 2 : calcul qui donne un mauvais résultat ── */
+function WrongCalc() {
+  const results = ["142h", "139h", "148h", "142h", "135h", "142h"];
+  const [idx, setIdx] = useState(0);
+  const [isWrong, setIsWrong] = useState(false);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setIdx(i => {
+        const next = (i + 1) % results.length;
+        setIsWrong(next !== 0 && next !== 3 && next !== 5);
+        return next;
+      });
+    }, 1200);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div className="flex flex-col gap-3 font-mono">
+      {[
+        { label: "Lun–Ven", val: "22h" },
+        { label: "Week-end", val: "15h" },
+        { label: "Extras", val: "?" },
+      ].map((r) => (
+        <div key={r.label} className="flex items-center justify-between gap-6 text-sm text-white/60">
+          <span>{r.label}</span>
+          <span className="text-white/90 font-bold">{r.val}</span>
+        </div>
+      ))}
+      <div className="border-t border-white/20 pt-3 flex items-center justify-between">
+        <span className="text-white/60 text-sm font-mono">Total</span>
+        <motion.span
+          key={idx}
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20 }}
+          className={`text-2xl font-bold font-mono ${isWrong ? "text-red-400" : "text-emerald-400"}`}
+        >
+          {results[idx]}
+          {isWrong && <span className="text-sm ml-1">✗</span>}
+          {!isWrong && <span className="text-sm ml-1 text-emerald-400">✓</span>}
+        </motion.span>
+      </div>
+    </div>
+  );
+}
+
+/* ── Animation 3 : compteur de tips qui s'envole ── */
+function TipsCounter() {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, v => Math.round(v));
+  const [phase, setPhase] = useState<"counting" | "vanish">("counting");
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loop() {
+      while (!cancelled) {
+        setPhase("counting");
+        await animate(count, 847, { duration: 2.5, ease: "easeOut" });
+        if (cancelled) break;
+        await new Promise(r => setTimeout(r, 800));
+        setPhase("vanish");
+        await animate(count, 0, { duration: 0.4, ease: "easeIn" });
+        await new Promise(r => setTimeout(r, 600));
+      }
+    }
+    loop();
+    return () => { cancelled = true; };
+  }, [count]);
+
+  return (
+    <div className="text-center">
+      <motion.div
+        animate={phase === "vanish" ? { opacity: 0, y: -20, scale: 0.8 } : { opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+      >
+        <motion.span className="text-[72px] font-bold font-mono leading-none text-[#C9A961]">
+          {rounded}
+        </motion.span>
+        <span className="text-3xl font-bold text-[#C9A961] ml-1">€</span>
+      </motion.div>
+      <motion.p
+        animate={phase === "vanish" ? { opacity: 1 } : { opacity: 0 }}
+        className="text-ink-muted text-sm mt-2 font-mono"
+      >
+        oublié ce mois
+      </motion.p>
+    </div>
+  );
+}
+
+/* ── Blocs ── */
 const problems = [
   {
     num: "01",
-    title: "Tu oublies des jours",
-    desc: "Une note iPhone, des heures notées au doigt mouillé, et le dimanche soir tu recalcules tout de tête.",
+    headline: "Tu oublies des jours.",
+    sub: "Un jour manquant = une heure perdue sur ta fiche de paie.",
+    bg: "bg-cream",
+    textColor: "text-ink",
+    mutedColor: "text-ink-muted",
     stat: "3 oublis",
     statSub: "par mois en moyenne",
+    statColor: "text-ink",
+    animation: <ForgottenCalendar />,
+    reverse: false,
   },
   {
     num: "02",
-    title: "Tu calcules à la main",
-    desc: "Fin de mois, tu additionnes des colonnes de chiffres, tu cherches tes fiches de paie, tu compares les heures sup.",
+    headline: "Tu calcules à la main.",
+    sub: "Fin de mois, tu additionnes tout de tête — et tu te trompes.",
+    bg: "bg-[#1A1A18]",
+    textColor: "text-white",
+    mutedColor: "text-white/50",
     stat: "45 min",
     statSub: "perdues chaque fin de mois",
+    statColor: "text-white",
+    animation: <WrongCalc />,
+    reverse: true,
   },
   {
     num: "03",
-    title: "Tes pourboires partent en fumée",
-    desc: "Tu vis avec tes pourboires au quotidien sans jamais voir le total mensuel. Tu sous-estimes ce que tu gagnes vraiment.",
+    headline: "Tes tips disparaissent.",
+    sub: "Tu les dépenses sans jamais voir le total mensuel.",
+    bg: "bg-cream-dark",
+    textColor: "text-ink",
+    mutedColor: "text-ink-muted",
     stat: "847 €",
     statSub: "de tips invisibles par mois",
+    statColor: "text-[#C9A961]",
+    animation: <TipsCounter />,
+    reverse: false,
   },
 ];
 
 export default function LandingProblems() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-
   return (
-    <section ref={ref} className="py-24 md:py-32 px-5 bg-cream-dark">
-      <div className="max-w-6xl mx-auto">
+    <section className="overflow-hidden">
+      {problems.map((p, i) => {
+        const ref = useRef(null); // eslint-disable-line react-hooks/rules-of-hooks
+        const inView = useInView(ref, { once: true, margin: "-60px" }); // eslint-disable-line react-hooks/rules-of-hooks
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-14"
-        >
-          <p className="text-xs font-semibold text-ink-muted uppercase tracking-[0.2em] mb-4">Ce que tu vis</p>
-          <h2 className="text-4xl md:text-5xl font-serif tracking-tight text-ink leading-tight max-w-[520px]">
-            Le quotidien de la plupart des serveurs
-          </h2>
-        </motion.div>
+        const textBlock = (
+          <motion.div
+            initial={{ opacity: 0, x: p.reverse ? 40 : -40 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ type: "spring", stiffness: 80, damping: 20 }}
+            className="flex flex-col justify-center py-16 md:py-24 px-6 md:px-16"
+          >
+            <p className={`text-xs font-semibold uppercase tracking-[0.2em] mb-6 ${p.mutedColor}`}>{p.num}</p>
+            <h2 className={`text-4xl md:text-5xl font-serif tracking-tight leading-tight mb-4 ${p.textColor}`}>
+              {p.headline}
+            </h2>
+            <p className={`text-base leading-relaxed mb-10 max-w-[36ch] ${p.mutedColor}`}>{p.sub}</p>
+            <div>
+              <p className={`text-4xl font-bold font-mono ${p.statColor}`}>{p.stat}</p>
+              <p className={`text-sm mt-1 ${p.mutedColor}`}>{p.statSub}</p>
+            </div>
+          </motion.div>
+        );
 
-        {/* Editorial rows — no icon cards */}
-        <div className="flex flex-col divide-y divide-border/60">
-          {problems.map((p, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 16 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
-              className="py-8 md:py-10 grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-4 md:gap-10 items-start"
-            >
-              {/* Big number */}
-              <span className="text-5xl md:text-6xl font-bold text-border/60 font-mono leading-none select-none w-[4ch] flex-shrink-0">
-                {p.num}
-              </span>
+        const animBlock = (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ type: "spring", stiffness: 70, damping: 18, delay: 0.15 }}
+            className="flex items-center justify-center py-16 md:py-24 px-8"
+          >
+            {p.animation}
+          </motion.div>
+        );
 
-              {/* Text */}
-              <div>
-                <h3 className="text-xl md:text-2xl font-semibold text-ink tracking-tight mb-2">{p.title}</h3>
-                <p className="text-ink-muted leading-relaxed max-w-[52ch]">{p.desc}</p>
-              </div>
-
-              {/* Callout stat */}
-              <div className="md:text-right flex-shrink-0">
-                <p className="text-2xl md:text-3xl font-bold text-ink font-mono">{p.stat}</p>
-                <p className="text-xs text-ink-muted mt-1">{p.statSub}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
+        return (
+          <div
+            key={i}
+            ref={ref}
+            className={`${p.bg} border-b border-black/5`}
+          >
+            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-[3fr_2fr]">
+              {p.reverse ? (
+                <>{animBlock}{textBlock}</>
+              ) : (
+                <>{textBlock}{animBlock}</>
+              )}
+            </div>
+          </div>
+        );
+      })}
     </section>
   );
 }
