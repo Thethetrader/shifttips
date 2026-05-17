@@ -16,12 +16,12 @@ export default function LandingNav() {
         <Link href="/" className="flex items-center gap-2.5">
           <Image
             src="/icons/icon-192.png"
-            alt="ShiftTips"
+            alt="Shiftips"
             width={32}
             height={32}
             className="w-8 h-8 rounded-xl shadow-[0_2px_8px_rgba(15,81,50,0.15)] flex-shrink-0"
           />
-          <span className="font-semibold text-ink tracking-tight">ShiftTips</span>
+          <span className="font-semibold text-ink tracking-tight">Shiftips</span>
         </Link>
 
         <Link

@@ -127,12 +127,12 @@ export default function LandingHero() {
             >
               <Image
                 src="/icons/icon-192.png"
-                alt="ShiftTips"
+                alt="Shiftips"
                 width={44}
                 height={44}
                 className="rounded-2xl shadow-[0_4px_16px_rgba(15,81,50,0.2)]"
               />
-              <span className="font-semibold text-ink tracking-tight text-lg">ShiftTips</span>
+              <span className="font-semibold text-ink tracking-tight text-lg">Shiftips</span>
             </motion.div>
 
             {/* Social proof pill */}
@@ -145,7 +145,7 @@ export default function LandingHero() {
               <div className="flex items-center gap-1.5 bg-white border border-border/60 rounded-full px-3 py-1.5 shadow-sm">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse flex-shrink-0" />
                 <span className="text-xs font-semibold text-ink font-mono">+ de 600</span>
-                <span className="text-xs text-ink-muted">utilisateurs utilisent ShiftTips</span>
+                <span className="text-xs text-ink-muted">utilisateurs utilisent Shiftips</span>
               </div>
             </motion.div>
 
@@ -177,7 +177,7 @@ export default function LandingHero() {
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.14 }}
               className="text-[17px] text-ink-muted leading-[1.7] max-w-[46ch] mb-10"
             >
-              ShiftTips t&rsquo;aide à enregistrer chaque service en 3 taps et te donne le total heures, pourboires et heures sup à la fin du mois.
+              Shiftips t&rsquo;aide à enregistrer chaque service en 3 taps et te donne le total heures, pourboires et heures sup à la fin du mois.
             </motion.p>
 
             <motion.div

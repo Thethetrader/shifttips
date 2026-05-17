@@ -6,7 +6,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 const faqs = [
   {
     q: "C'est vraiment gratuit ?",
-    a: "Oui, complètement. Pas d'abonnement, pas de version freemium, pas de pub. ShiftTips est gratuit pour toujours. Tu peux l'utiliser autant que tu veux sans dépenser un centime.",
+    a: "Oui, complètement. Pas d'abonnement, pas de version freemium, pas de pub. Shiftips est gratuit pour toujours. Tu peux l'utiliser autant que tu veux sans dépenser un centime.",
   },
   {
     q: "Mes données sont-elles en sécurité ?",
@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     q: "Comment installer l'app sur mon iPhone ?",
-    a: "Ouvre ShiftTips dans Safari, appuie sur le bouton Partager, puis 'Sur l'écran d'accueil'. L'app s'installe comme une vraie app native — icône, splash screen, mode plein écran.",
+    a: "Ouvre Shiftips dans Safari, appuie sur le bouton Partager, puis 'Sur l'écran d'accueil'. L'app s'installe comme une vraie app native — icône, splash screen, mode plein écran.",
   },
   {
     q: "Est-ce que le calcul des heures sup est fiable ?",

@@ -36,13 +36,13 @@ export default function LandingFooter() {
           <Link href="/" className="flex items-center gap-3">
             <Image
               src="/icons/icon-192.png"
-              alt="ShiftTips"
+              alt="Shiftips"
               width={36}
               height={36}
               className="w-9 h-9 rounded-xl flex-shrink-0"
             />
             <div>
-              <p className="font-semibold text-white text-sm leading-none">ShiftTips</p>
+              <p className="font-semibold text-white text-sm leading-none">Shiftips</p>
               <p className="text-white/30 text-[11px] mt-0.5">Suivi heures et pourboires</p>
             </div>
           </Link>
@@ -57,7 +57,7 @@ export default function LandingFooter() {
             <Link href="/contact" className="hover:text-white/70 transition-colors">
               Contact
             </Link>
-            <span className="text-white/20">©&nbsp;2026 ShiftTips</span>
+            <span className="text-white/20">©&nbsp;2026 Shiftips</span>
           </div>
         </div>
       </div>

@@ -9,7 +9,7 @@ const testimonials = [
     role: "Serveuse · Brasserie Lipp, Paris 6e",
     initial: "CR",
     color: "bg-emerald",
-    quote: "Je savais pas que mes pourboires pesaient autant. Avec ShiftTips j'ai vu que sur le mois j'avais touché 920 € de tips. Avant je les dépensais sans même les compter. Maintenant je les mets de côté.",
+    quote: "Je savais pas que mes pourboires pesaient autant. Avec Shiftips j'ai vu que sur le mois j'avais touché 920 € de tips. Avant je les dépensais sans même les compter. Maintenant je les mets de côté.",
   },
   {
     name: "Théo M.",

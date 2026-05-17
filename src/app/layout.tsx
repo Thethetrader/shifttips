@@ -24,28 +24,28 @@ const playfair = Playfair_Display({
   display: "swap",
 });
 
-const BASE_URL = "https://shifttips-565.netlify.app";
+const BASE_URL = "https://shiftips.fr";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "ShiftTips — Suivi heures & pourboires pour serveurs",
-    template: "%s | ShiftTips",
+    default: "Shiftips — Suivi heures & pourboires pour serveurs",
+    template: "%s | Shiftips",
   },
   description:
-    "ShiftTips, l'app gratuite pour les serveurs et serveuses : suis tes heures, tes pourboires et tes heures supplémentaires en 3 taps. Récapitulatif mensuel automatique. Installable sur iPhone et Android.",
+    "Shiftips, l'app gratuite pour les serveurs et serveuses : suis tes heures, tes pourboires et tes heures supplémentaires en 3 taps. Récapitulatif mensuel automatique. Installable sur iPhone et Android.",
   keywords: [
     "pourboires serveur",
     "suivi heures travail restauration",
     "app serveur restaurant",
     "calcul heures supplémentaires",
     "pourboires mensuel",
-    "shifttips",
+    "shiftips",
     "app restaurant gratuite",
   ],
-  authors: [{ name: "ShiftTips" }],
-  creator: "ShiftTips",
-  publisher: "ShiftTips",
+  authors: [{ name: "Shiftips" }],
+  creator: "Shiftips",
+  publisher: "Shiftips",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -56,8 +56,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_FR",
     url: BASE_URL,
-    siteName: "ShiftTips",
-    title: "ShiftTips — Suivi heures & pourboires pour serveurs",
+    siteName: "Shiftips",
+    title: "Shiftips — Suivi heures & pourboires pour serveurs",
     description:
       "L'app gratuite pour les serveurs : suis tes heures, tes pourboires et tes heures sup en 3 taps. Récap mensuel automatique.",
     images: [
@@ -65,13 +65,13 @@ export const metadata: Metadata = {
         url: "/logo-og.jpg",
         width: 1200,
         height: 630,
-        alt: "ShiftTips — Suivi heures et pourboires",
+        alt: "Shiftips — Suivi heures et pourboires",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ShiftTips — Suivi heures & pourboires pour serveurs",
+    title: "Shiftips — Suivi heures & pourboires pour serveurs",
     description:
       "L'app gratuite pour les serveurs : suis tes heures, tes pourboires et tes heures sup en 3 taps.",
     images: ["/logo-og.jpg"],
@@ -117,7 +117,7 @@ export default function RootLayout({
     >
       <head>
         <link rel="canonical" href={BASE_URL} />
-        <meta name="application-name" content="ShiftTips" />
+        <meta name="application-name" content="Shiftips" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="font-sans antialiased bg-cream text-ink">
