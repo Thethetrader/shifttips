@@ -41,7 +41,7 @@ function InstallModal({ onClose }: { onClose: () => void }) {
               ✕
             </button>
           </div>
-          <p className="text-sm text-ink-muted">Ajoute l'app sur ton écran d'accueil — gratuit, sans App Store.</p>
+          <p className="text-sm text-ink-muted">Ajoute l&apos;app sur ton écran d&apos;accueil — gratuit, sans App Store.</p>
         </div>
 
         {/* Tabs */}
@@ -99,18 +99,18 @@ function InstallModal({ onClose }: { onClose: () => void }) {
 
 const IPHONE_STEPS = [
   <>Ouvre <strong>shifttips-565.netlify.app</strong> dans <strong>Safari</strong></>,
-  <>Appuie sur le bouton <strong>Partager</strong> <span className="inline-block">📤</span> en bas de l'écran</>,
-  <>Fais défiler vers le bas et appuie sur <strong>"Sur l'écran d'accueil"</strong></>,
-  <>Appuie sur <strong>"Ajouter"</strong> en haut à droite</>,
-  <>L'app apparaît sur ton écran d'accueil <strong>comme une vraie app</strong> 🎉</>,
+  <>Appuie sur le bouton <strong>Partager</strong> <span className="inline-block">📤</span> en bas de l&apos;écran</>,
+  <>Fais défiler vers le bas et appuie sur <strong>&ldquo;Sur l&apos;écran d&apos;accueil&rdquo;</strong></>,
+  <>Appuie sur <strong>&ldquo;Ajouter&rdquo;</strong> en haut à droite</>,
+  <>L&apos;app apparaît sur ton écran d&apos;accueil <strong>comme une vraie app</strong> 🎉</>,
 ];
 
 const ANDROID_STEPS = [
   <>Ouvre <strong>shifttips-565.netlify.app</strong> dans <strong>Chrome</strong></>,
   <>Appuie sur les <strong>⋮</strong> (3 points) en haut à droite</>,
-  <>Appuie sur <strong>"Ajouter à l'écran d'accueil"</strong> ou <strong>"Installer l'application"</strong></>,
-  <>Confirme en appuyant sur <strong>"Installer"</strong></>,
-  <>L'app apparaît sur ton écran d'accueil <strong>comme une vraie app</strong> 🎉</>,
+  <>Appuie sur <strong>&ldquo;Ajouter à l&apos;écran d&apos;accueil&rdquo;</strong> ou <strong>&ldquo;Installer l&apos;application&rdquo;</strong></>,
+  <>Confirme en appuyant sur <strong>&ldquo;Installer&rdquo;</strong></>,
+  <>L&apos;app apparaît sur ton écran d&apos;accueil <strong>comme une vraie app</strong> 🎉</>,
 ];
 
 interface InstallPWAButtonProps {
