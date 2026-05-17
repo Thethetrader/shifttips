@@ -25,15 +25,13 @@ export default function LandingFooter() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl overflow-hidden bg-white/10 flex items-center justify-center flex-shrink-0">
-              <Image
-                src="/logo.jpg"
-                alt="ShiftTips"
-                width={36}
-                height={36}
-                className="w-full h-full object-contain"
-              />
-            </div>
+            <Image
+              src="/icons/icon-192.png"
+              alt="ShiftTips"
+              width={36}
+              height={36}
+              className="w-9 h-9 rounded-xl flex-shrink-0"
+            />
             <div>
               <p className="font-semibold text-white text-sm leading-none">ShiftTips</p>
               <p className="text-white/30 text-[11px] mt-0.5">Suivi heures et pourboires</p>

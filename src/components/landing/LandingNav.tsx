@@ -14,15 +14,13 @@ export default function LandingNav() {
     >
       <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(15,81,50,0.15)] bg-cream flex-shrink-0 flex items-center justify-center">
-            <Image
-              src="/logo.jpg"
-              alt="ShiftTips"
-              width={32}
-              height={32}
-              className="w-full h-full object-contain"
-            />
-          </div>
+          <Image
+            src="/icons/icon-192.png"
+            alt="ShiftTips"
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded-xl shadow-[0_2px_8px_rgba(15,81,50,0.15)] flex-shrink-0"
+          />
           <span className="font-semibold text-ink tracking-tight">ShiftTips</span>
         </Link>
 

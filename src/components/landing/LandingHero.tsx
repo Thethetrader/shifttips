@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 function CalendarPhone() {
@@ -116,10 +117,26 @@ export default function LandingHero() {
 
           {/* Left — content */}
           <div className="max-w-[520px]">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 18 }}
+              className="flex items-center gap-3 mb-8"
+            >
+              <Image
+                src="/icons/icon-192.png"
+                alt="ShiftTips"
+                width={44}
+                height={44}
+                className="rounded-2xl shadow-[0_4px_16px_rgba(15,81,50,0.2)]"
+              />
+              <span className="font-semibold text-ink tracking-tight text-lg">ShiftTips</span>
+            </motion.div>
+
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
+              transition={{ duration: 0.4, delay: 0.05 }}
               className="text-xs font-semibold text-ink-muted uppercase tracking-[0.2em] mb-6"
             >
               Pour les serveurs et serveuses
