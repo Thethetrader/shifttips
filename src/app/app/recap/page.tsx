@@ -17,14 +17,14 @@ export default async function RecapPage() {
   const [{ data: shifts }, { data: prevShifts }, { data: profile }] = await Promise.all([
     supabase.from("shifts").select("*").eq("user_id", user!.id).gte("shift_date", firstDay).lte("shift_date", lastDay),
     supabase.from("shifts").select("*").eq("user_id", user!.id).gte("shift_date", prevFirstDay).lte("shift_date", prevLastDay),
-    supabase.from("profiles").select("weekly_hours, weekly_rest_days, contract_type").eq("id", user!.id).single(),
+    supabase.from("profiles").select("weekly_hours, weekly_rest_days, contract_type, schedule_template").eq("id", user!.id).single(),
   ]);
 
   return (
     <RecapView
       shifts={shifts || []}
       prevShifts={prevShifts || []}
-      profile={profile || { weekly_hours: 35, weekly_rest_days: 2, contract_type: null }}
+      profile={profile || { weekly_hours: 35, weekly_rest_days: 2, contract_type: null, schedule_template: null }}
       currentMonth={now}
     />
   );

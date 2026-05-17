@@ -15,7 +15,7 @@ import {
 import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/client";
 import ShiftModal from "@/components/app/ShiftModal";
-import type { Shift } from "@/lib/supabase/types";
+import type { Shift, ScheduleTemplate } from "@/lib/supabase/types";
 import { shiftsToDateMap, formatTips } from "@/lib/calculations";
 
 const DAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
@@ -24,9 +24,10 @@ interface Props {
   initialShifts: Shift[];
   userId: string;
   firstName: string | null;
+  scheduleTemplate?: ScheduleTemplate | null;
 }
 
-export default function CalendarView({ initialShifts, userId, firstName }: Props) {
+export default function CalendarView({ initialShifts, userId, firstName, scheduleTemplate }: Props) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [shifts, setShifts] = useState<Shift[]>(initialShifts);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -247,6 +248,7 @@ export default function CalendarView({ initialShifts, userId, firstName }: Props
             date={selectedDate}
             existingShift={selectedShift}
             userId={userId}
+            scheduleTemplate={scheduleTemplate}
             onSaved={handleShiftSaved}
             onDeleted={handleShiftDeleted}
             onClose={() => setModalOpen(false)}

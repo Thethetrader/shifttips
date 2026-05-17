@@ -8,12 +8,14 @@ import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { Shift } from "@/lib/supabase/types";
+import type { Shift, ScheduleTemplate } from "@/lib/supabase/types";
+import { getISODay } from "date-fns";
 
 interface Props {
   date: Date;
   existingShift?: Shift;
   userId: string;
+  scheduleTemplate?: ScheduleTemplate | null;
   onSaved: (shift: Shift) => void;
   onDeleted: (date: string) => void;
   onClose: () => void;
@@ -25,9 +27,12 @@ function timeToDecimal(time: string): number {
   return h + m / 60;
 }
 
-export default function ShiftModal({ date, existingShift, userId, onSaved, onDeleted, onClose }: Props) {
-  const [startTime, setStartTime] = useState(existingShift?.start_time?.slice(0, 5) || "09:00");
-  const [endTime, setEndTime] = useState(existingShift?.end_time?.slice(0, 5) || "17:00");
+export default function ShiftModal({ date, existingShift, userId, scheduleTemplate, onSaved, onDeleted, onClose }: Props) {
+  const dayKey = String(getISODay(date));
+  const tpl = !existingShift ? (scheduleTemplate?.[dayKey] ?? null) : null;
+
+  const [startTime, setStartTime] = useState(existingShift?.start_time?.slice(0, 5) || tpl?.start || "09:00");
+  const [endTime, setEndTime] = useState(existingShift?.end_time?.slice(0, 5) || tpl?.end || "17:00");
   const [tips, setTips] = useState(existingShift?.tips?.toString() || "");
   const [note, setNote] = useState(existingShift?.note || "");
   const [saving, setSaving] = useState(false);
@@ -122,6 +127,13 @@ export default function ShiftModal({ date, existingShift, userId, onSaved, onDel
               </button>
             )}
           </div>
+
+          {tpl && !existingShift && (
+            <div className="bg-emerald/8 rounded-xl px-4 py-2.5 mb-4 flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald flex-shrink-0" />
+              <p className="text-xs text-emerald font-medium">D&rsquo;après ton planning type · Modifie si besoin</p>
+            </div>
+          )}
 
           {/* Hours — visual display */}
           <div className="bg-white rounded-2xl px-5 py-4 mb-5 border border-border/60 shadow-card">

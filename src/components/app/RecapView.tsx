@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { format, getDaysInMonth } from "date-fns";
+import { format, getDaysInMonth, eachDayOfInterval, startOfMonth, endOfMonth, getISODay } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
   BarChart,
@@ -12,7 +12,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import type { Shift } from "@/lib/supabase/types";
+import type { Shift, ScheduleTemplate } from "@/lib/supabase/types";
 import {
   calcTotalHours,
   calcTotalTips,
@@ -26,7 +26,7 @@ import {
 interface Props {
   shifts: Shift[];
   prevShifts: Shift[];
-  profile: { weekly_hours: number; weekly_rest_days: number; contract_type: string | null };
+  profile: { weekly_hours: number; weekly_rest_days: number; contract_type: string | null; schedule_template?: ScheduleTemplate | null };
   currentMonth: Date;
 }
 
@@ -92,6 +92,20 @@ export default function RecapView({ shifts, prevShifts, profile, currentMonth }:
   const tipsChange = calcChangePercent(totalTips, prevTotalTips);
   const hoursChange = calcChangePercent(totalHours, prevTotalHours);
 
+  // Planned hours from schedule template
+  const plannedHours = (() => {
+    const tpl = profile.schedule_template;
+    if (!tpl || Object.keys(tpl).length === 0) return null;
+    const days = eachDayOfInterval({ start: startOfMonth(currentMonth), end: endOfMonth(currentMonth) });
+    return days.reduce((sum, day) => {
+      const entry = tpl[String(getISODay(day))];
+      if (!entry) return sum;
+      const [sh, sm] = entry.start.split(":").map(Number);
+      const [eh, em] = entry.end.split(":").map(Number);
+      return sum + (eh + em / 60) - (sh + sm / 60);
+    }, 0);
+  })();
+
   // Chart data: tips per day of month
   const chartData = Array.from({ length: daysInMonth }, (_, i) => {
     const d = i + 1;
@@ -145,6 +159,49 @@ export default function RecapView({ shifts, prevShifts, profile, currentMonth }:
           index={3}
         />
       </div>
+
+      {/* Planning vs réel */}
+      {plannedHours !== null && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.28 }}
+          className="bg-white rounded-3xl p-5 border border-border/60 shadow-card mb-6"
+        >
+          <p className="text-xs text-ink-muted uppercase tracking-widest font-medium mb-4">Planning vs réel</p>
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <p className="text-xs text-ink-muted mb-1">Prévu</p>
+              <p className="text-2xl font-bold font-mono text-ink">{formatHours(plannedHours)}</p>
+            </div>
+            <div className="text-center">
+              {(() => {
+                const diff = totalHours - plannedHours;
+                const isPos = diff >= 0;
+                return (
+                  <div className={`px-3 py-1.5 rounded-xl text-sm font-bold font-mono ${isPos ? "bg-emerald/10 text-emerald" : "bg-red-50 text-red-500"}`}>
+                    {isPos ? "+" : ""}{formatHours(Math.abs(diff))}
+                  </div>
+                );
+              })()}
+              <p className="text-[10px] text-ink-faint mt-1">écart</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-ink-muted mb-1">Réel</p>
+              <p className="text-2xl font-bold font-mono text-ink">{formatHours(totalHours)}</p>
+            </div>
+          </div>
+          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-emerald rounded-full transition-all"
+              style={{ width: plannedHours > 0 ? `${Math.min(100, (totalHours / plannedHours) * 100)}%` : "0%" }}
+            />
+          </div>
+          <p className="text-xs text-ink-faint mt-2 text-right">
+            {plannedHours > 0 ? `${Math.round((totalHours / plannedHours) * 100)}% du planning réalisé` : ""}
+          </p>
+        </motion.div>
+      )}
 
       {/* Pourboires chart */}
       <motion.div

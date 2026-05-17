@@ -21,7 +21,7 @@ export default async function AppPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("first_name")
+    .select("first_name, schedule_template")
     .eq("id", user!.id)
     .maybeSingle();
 
@@ -30,6 +30,7 @@ export default async function AppPage() {
       initialShifts={shifts || []}
       userId={user!.id}
       firstName={(profile as { first_name: string | null } | null)?.first_name || null}
+      scheduleTemplate={(profile as { schedule_template: Record<string, { start: string; end: string }> | null } | null)?.schedule_template || null}
     />
   );
 }

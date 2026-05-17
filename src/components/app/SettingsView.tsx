@@ -6,9 +6,19 @@ import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { Profile, ContractType } from "@/lib/supabase/types";
+import type { Profile, ContractType, ScheduleTemplate } from "@/lib/supabase/types";
 
 const CONTRACT_TYPES: ContractType[] = ["CDI", "CDD", "Extra", "Apprenti"];
+
+const WEEK_DAYS = [
+  { key: "1", label: "Lun" },
+  { key: "2", label: "Mar" },
+  { key: "3", label: "Mer" },
+  { key: "4", label: "Jeu" },
+  { key: "5", label: "Ven" },
+  { key: "6", label: "Sam" },
+  { key: "7", label: "Dim" },
+];
 
 interface Props {
   profile: Profile | null;
@@ -23,6 +33,7 @@ export default function SettingsView({ profile, userId, email }: Props) {
   const [contractType, setContractType] = useState<ContractType>(profile?.contract_type || "CDI");
   const [weeklyHours, setWeeklyHours] = useState(profile?.weekly_hours?.toString() || "35");
   const [weeklyRestDays, setWeeklyRestDays] = useState(profile?.weekly_rest_days?.toString() || "2");
+  const [scheduleTemplate, setScheduleTemplate] = useState<ScheduleTemplate>(profile?.schedule_template || {});
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +53,7 @@ export default function SettingsView({ profile, userId, email }: Props) {
       contract_type: contractType,
       weekly_hours: parseFloat(weeklyHours) || 35,
       weekly_rest_days: parseInt(weeklyRestDays) || 2,
+      schedule_template: scheduleTemplate,
     });
 
     setSaving(false);
@@ -171,6 +183,78 @@ export default function SettingsView({ profile, userId, email }: Props) {
                 </div>
               </div>
             </div>
+          </div>
+        </motion.section>
+
+        {/* Planning type */}
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.15 }}
+          className="bg-white rounded-3xl p-5 border border-border/60 shadow-card"
+        >
+          <h2 className="text-sm font-semibold text-ink mb-1 uppercase tracking-widest">Planning type</h2>
+          <p className="text-xs text-ink-muted mb-4">Les heures sont pré-remplies à la saisie — modifiables à tout moment.</p>
+          <div className="flex flex-col gap-3">
+            {WEEK_DAYS.map(({ key, label }) => {
+              const active = !!scheduleTemplate[key];
+              return (
+                <div key={key} className="flex flex-col gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setScheduleTemplate(prev => {
+                        const next = { ...prev };
+                        if (next[key]) { delete next[key]; }
+                        else { next[key] = { start: "17:00", end: "23:30" }; }
+                        return next;
+                      });
+                    }}
+                    className={`flex items-center justify-between h-11 px-4 rounded-xl font-medium text-sm transition-all ${
+                      active
+                        ? "bg-emerald text-white"
+                        : "bg-cream border border-border text-ink-muted"
+                    }`}
+                  >
+                    <span>{label}</span>
+                    {active && scheduleTemplate[key] && (
+                      <span className="text-white/80 text-xs font-mono">
+                        {scheduleTemplate[key].start} – {scheduleTemplate[key].end}
+                      </span>
+                    )}
+                    {!active && <span className="text-ink-faint text-xs">Repos</span>}
+                  </button>
+                  {active && scheduleTemplate[key] && (
+                    <div className="flex gap-2 px-1">
+                      <div className="flex-1 flex flex-col gap-1">
+                        <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Début</span>
+                        <input
+                          type="time"
+                          value={scheduleTemplate[key].start}
+                          onChange={e => setScheduleTemplate(prev => ({
+                            ...prev,
+                            [key]: { ...prev[key], start: e.target.value }
+                          }))}
+                          className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
+                        />
+                      </div>
+                      <div className="flex-1 flex flex-col gap-1">
+                        <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Fin</span>
+                        <input
+                          type="time"
+                          value={scheduleTemplate[key].end}
+                          onChange={e => setScheduleTemplate(prev => ({
+                            ...prev,
+                            [key]: { ...prev[key], end: e.target.value }
+                          }))}
+                          className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </motion.section>
 
