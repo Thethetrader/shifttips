@@ -143,7 +143,7 @@ export default function LandingHero() {
             >
               <div className="flex items-center gap-1.5 bg-white border border-border/60 rounded-full px-3 py-1.5 shadow-sm">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse flex-shrink-0" />
-                <span className="text-xs font-semibold text-ink font-mono">plus de 600</span>
+                <span className="text-xs font-semibold text-ink font-mono">+ de 600</span>
                 <span className="text-xs text-ink-muted">utilisateurs utilisent ShiftTips</span>
               </div>
             </motion.div>
