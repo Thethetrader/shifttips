@@ -1,20 +1,24 @@
 import { createClient } from "@/lib/supabase/server";
 import RecapView from "@/components/app/RecapView";
-import { format, startOfMonth, endOfMonth, subMonths, startOfYear } from "date-fns";
+import { format, startOfMonth, endOfMonth, subMonths, startOfYear, parse } from "date-fns";
 
-export default async function RecapPage() {
+export default async function RecapPage({ searchParams }: { searchParams: { month?: string } }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   const now = new Date();
-  const firstDay = format(startOfMonth(now), "yyyy-MM-dd");
-  const lastDay = format(endOfMonth(now), "yyyy-MM-dd");
+  const currentMonth = searchParams.month
+    ? parse(searchParams.month, "yyyy-MM", new Date())
+    : now;
 
-  const prevMonth = subMonths(now, 1);
+  const firstDay = format(startOfMonth(currentMonth), "yyyy-MM-dd");
+  const lastDay = format(endOfMonth(currentMonth), "yyyy-MM-dd");
+
+  const prevMonth = subMonths(currentMonth, 1);
   const prevFirstDay = format(startOfMonth(prevMonth), "yyyy-MM-dd");
   const prevLastDay = format(endOfMonth(prevMonth), "yyyy-MM-dd");
 
-  const yearStart = format(startOfYear(now), "yyyy-MM-dd");
+  const yearStart = format(startOfYear(currentMonth), "yyyy-MM-dd");
 
   const [{ data: shifts }, { data: prevShifts }, { data: ytdShifts }, { data: profile }] = await Promise.all([
     supabase.from("shifts").select("*").eq("user_id", user!.id).gte("shift_date", firstDay).lte("shift_date", lastDay),
@@ -29,7 +33,7 @@ export default async function RecapPage() {
       prevShifts={prevShifts || []}
       ytdShifts={ytdShifts || []}
       profile={profile || { weekly_hours: 35, weekly_rest_days: 2, contract_type: null, schedule_template: null }}
-      currentMonth={now}
+      currentMonth={currentMonth}
     />
   );
 }

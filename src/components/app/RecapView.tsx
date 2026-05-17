@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { format, getDaysInMonth } from "date-fns";
+import { format, getDaysInMonth, addMonths, subMonths } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useRouter } from "next/navigation";
 import {
   BarChart,
   Bar,
@@ -77,8 +78,15 @@ function StatCard({
 }
 
 export default function RecapView({ shifts, prevShifts, ytdShifts, profile, currentMonth }: Props) {
+  const router = useRouter();
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
+
+  const goToMonth = (date: Date) => {
+    router.push(`/app/recap?month=${format(date, "yyyy-MM")}`);
+  };
+
+  const isCurrentMonth = format(currentMonth, "yyyy-MM") === format(new Date(), "yyyy-MM");
 
   const totalHours = calcTotalHours(shifts);
   const totalTips = calcTotalTips(shifts);
@@ -118,9 +126,24 @@ export default function RecapView({ shifts, prevShifts, ytdShifts, profile, curr
         className="mb-6"
       >
         <p className="text-xs text-ink-muted font-medium uppercase tracking-widest mb-1">Récap mensuel</p>
-        <h1 className="text-2xl font-semibold tracking-tight text-ink capitalize">
-          {format(currentMonth, "MMMM yyyy", { locale: fr })}
-        </h1>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => goToMonth(subMonths(currentMonth, 1))}
+            className="w-8 h-8 rounded-full bg-white border border-border/60 flex items-center justify-center shadow-sm active:scale-95 transition-transform"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <h1 className="text-2xl font-semibold tracking-tight text-ink capitalize flex-1 text-center">
+            {format(currentMonth, "MMMM yyyy", { locale: fr })}
+          </h1>
+          <button
+            onClick={() => goToMonth(addMonths(currentMonth, 1))}
+            disabled={isCurrentMonth}
+            className="w-8 h-8 rounded-full bg-white border border-border/60 flex items-center justify-center shadow-sm active:scale-95 transition-transform disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
       </motion.div>
 
       {/* Stats grid — asymmetric 2-col */}
