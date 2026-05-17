@@ -152,28 +152,6 @@ export default function RecapView({ shifts, prevShifts, ytdShifts, profile, curr
         />
       </div>
 
-      {/* Cumul tips YTD */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.28 }}
-        className="rounded-3xl p-5 mb-6 flex items-center justify-between gap-4"
-        style={{ background: "linear-gradient(135deg, #0f5132 0%, #1a7a4c 100%)" }}
-      >
-        <div>
-          <p className="text-xs font-medium uppercase tracking-widest text-white/60 mb-1">
-            Pourboires {year}
-          </p>
-          <p className="text-3xl font-bold tracking-tight font-mono text-white">
-            {formatTips(ytdTips)}
-          </p>
-          <p className="text-xs text-white/50 mt-1">cumul depuis le 1er janvier</p>
-        </div>
-        <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 text-2xl">
-          🏆
-        </div>
-      </motion.div>
-
       {/* Planning vs réel */}
       <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -268,11 +246,32 @@ export default function RecapView({ shifts, prevShifts, ytdShifts, profile, curr
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="bg-cream-dark rounded-2xl px-4 py-3"
+        className="bg-cream-dark rounded-2xl px-4 py-3 mb-4"
       >
         <p className="text-xs text-ink-muted">
           Les jours de repos sont calculés de façon déclarative : jours du mois sans service enregistré.
         </p>
+      </motion.div>
+
+      {/* Cumul tips YTD */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.45 }}
+        className="bg-white rounded-3xl p-5 border border-border/60 shadow-card flex items-center justify-between gap-4"
+      >
+        <div>
+          <p className="text-xs font-medium uppercase tracking-widest text-ink-muted mb-1">
+            Pourboires {year}
+          </p>
+          <p className="text-3xl font-bold tracking-tight font-mono text-ink">
+            {formatTips(ytdTips)}
+          </p>
+          <p className="text-xs text-ink-muted mt-1">cumul depuis le 1er janvier</p>
+        </div>
+        <div className="w-10 h-10 rounded-2xl bg-emerald/10 flex items-center justify-center flex-shrink-0 text-xl">
+          🏆
+        </div>
       </motion.div>
     </div>
   );
