@@ -27,6 +27,18 @@ function timeToDecimal(time: string): number {
   return h + m / 60;
 }
 
+function formatHM(h: number): string {
+  const hrs = Math.floor(h);
+  const mins = Math.round((h - hrs) * 60);
+  if (mins === 0) return `${hrs}h`;
+  return `${hrs}h${String(mins).padStart(2, "0")}`;
+}
+
+// Art. L3121-16 Code du travail + Convention HCR : pause de 30 min si > 6h de travail
+function legalPauseMinutes(rawHours: number): number {
+  return rawHours > 6 ? 30 : 0;
+}
+
 export default function ShiftModal({ date, existingShift, userId, scheduleTemplate, onSaved, onDeleted, onClose }: Props) {
   const dayKey = String(getISODay(date));
   const tpl = !existingShift ? (scheduleTemplate?.[dayKey] ?? null) : null;
@@ -42,11 +54,16 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
   const dateStr = format(date, "yyyy-MM-dd");
   const displayDate = format(date, "EEEE d MMMM", { locale: fr });
 
-  const rawHours = timeToDecimal(endTime) - timeToDecimal(startTime);
-  const hoursWorked = rawHours < 0 ? rawHours + 24 : rawHours; // gère les shifts après minuit
+  const rawHours = (() => {
+    const r = timeToDecimal(endTime) - timeToDecimal(startTime);
+    return r < 0 ? r + 24 : r;
+  })();
+
+  const pauseMin = legalPauseMinutes(rawHours);
+  const netHours = Math.max(0, rawHours - pauseMin / 60);
 
   async function handleSave() {
-    if (hoursWorked <= 0) {
+    if (netHours <= 0) {
       setError("La durée du service doit être supérieure à 0.");
       return;
     }
@@ -59,7 +76,7 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
       shift_date: dateStr,
       start_time: startTime + ":00",
       end_time: endTime + ":00",
-      hours_worked: hoursWorked,
+      hours_worked: netHours,
       tips: parseFloat(tips) || 0,
       note: note || null,
     };
@@ -136,23 +153,33 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
             </div>
           )}
 
-          {/* Hours — visual display */}
+          {/* Hours card */}
           <div className="bg-white rounded-2xl px-5 py-4 mb-5 border border-border/60 shadow-card">
             <p className="text-xs text-ink-muted mb-3 uppercase tracking-widest font-medium">
-              Durée calculée
+              Heures travaillées
             </p>
-            <div className="flex items-baseline gap-1">
+            <div className="flex items-baseline gap-1 mb-3">
               <span className="text-4xl font-bold text-ink font-mono tracking-tight">
-                {Math.floor(hoursWorked)}
+                {Math.floor(netHours)}
               </span>
               <span className="text-lg text-ink-muted font-mono">h</span>
               <span className="text-4xl font-bold text-ink font-mono tracking-tight">
-                {String(Math.round((hoursWorked % 1) * 60)).padStart(2, "0")}
+                {String(Math.round((netHours % 1) * 60)).padStart(2, "0")}
               </span>
               <span className="text-lg text-ink-muted font-mono">min</span>
             </div>
+            {pauseMin > 0 && (
+              <div className="flex items-center gap-1.5 text-[11px] text-ink-muted border-t border-border/40 pt-2.5">
+                <span className="font-mono">{formatHM(rawHours)}</span>
+                <span className="opacity-40">−</span>
+                <span className="font-mono">{pauseMin} min pause légale</span>
+                <span className="opacity-40">=</span>
+                <span className="font-mono font-semibold text-ink">{formatHM(netHours)}</span>
+              </div>
+            )}
           </div>
 
+          {/* Start / End */}
           <div className="flex gap-3 mb-5">
             <div className="flex-1 flex flex-col gap-2">
               <Label className="text-sm font-medium text-ink">Début</Label>
@@ -174,6 +201,7 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
             </div>
           </div>
 
+          {/* Tips */}
           <div className="flex flex-col gap-2 mb-5">
             <Label className="text-sm font-medium text-ink">Pourboires (€)</Label>
             <div className="relative">
