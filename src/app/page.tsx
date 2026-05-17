@@ -1,5 +1,6 @@
 import LandingNav from "@/components/landing/LandingNav";
 import LandingHero from "@/components/landing/LandingHero";
+import LandingValues from "@/components/landing/LandingValues";
 import LandingProblems from "@/components/landing/LandingProblems";
 import LandingScreens from "@/components/landing/LandingScreens";
 import LandingHowItWorks from "@/components/landing/LandingHowItWorks";
@@ -13,6 +14,7 @@ export default function HomePage() {
     <div className="bg-white min-h-[100dvh] overflow-x-hidden">
       <LandingNav />
       <LandingHero />
+      <LandingValues />
       <LandingProblems />
       <LandingScreens />
       <LandingHowItWorks />
