@@ -69,6 +69,14 @@
 @layer utilities {
   .text-balance { text-wrap: balance; }
 
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .mb-safe {
+    margin-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
   .glass {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
