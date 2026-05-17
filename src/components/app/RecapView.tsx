@@ -27,6 +27,7 @@ import {
 interface Props {
   shifts: Shift[];
   prevShifts: Shift[];
+  ytdShifts: Pick<Shift, "tips">[];
   profile: { weekly_hours: number; weekly_rest_days: number; contract_type: string | null };
   currentMonth: Date;
 }
@@ -75,7 +76,7 @@ function StatCard({
   );
 }
 
-export default function RecapView({ shifts, prevShifts, profile, currentMonth }: Props) {
+export default function RecapView({ shifts, prevShifts, ytdShifts, profile, currentMonth }: Props) {
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
 
@@ -92,6 +93,7 @@ export default function RecapView({ shifts, prevShifts, profile, currentMonth }:
 
   const tipsChange = calcChangePercent(totalTips, prevTotalTips);
   const hoursChange = calcChangePercent(totalHours, prevTotalHours);
+  const ytdTips = ytdShifts.reduce((sum, s) => sum + (s.tips || 0), 0);
 
   // Heures prévues = mensualisation légale (hebdo × 52/12)
   const plannedHours = monthlyContractHours(profile.weekly_hours);
@@ -149,6 +151,28 @@ export default function RecapView({ shifts, prevShifts, profile, currentMonth }:
           index={3}
         />
       </div>
+
+      {/* Cumul tips YTD */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.28 }}
+        className="rounded-3xl p-5 mb-6 flex items-center justify-between gap-4"
+        style={{ background: "linear-gradient(135deg, #0f5132 0%, #1a7a4c 100%)" }}
+      >
+        <div>
+          <p className="text-xs font-medium uppercase tracking-widest text-white/60 mb-1">
+            Pourboires {year}
+          </p>
+          <p className="text-3xl font-bold tracking-tight font-mono text-white">
+            {formatTips(ytdTips)}
+          </p>
+          <p className="text-xs text-white/50 mt-1">cumul depuis le 1er janvier</p>
+        </div>
+        <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 text-2xl">
+          🏆
+        </div>
+      </motion.div>
 
       {/* Planning vs réel */}
       <motion.div
