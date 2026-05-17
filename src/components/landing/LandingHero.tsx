@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
-import { useEffect } from "react";
+import { motion } from "framer-motion";
 
 function CalendarPhone() {
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -110,19 +109,6 @@ function CalendarPhone() {
   );
 }
 
-const AVATARS = ["🧑🏽‍🍳", "👩🏻‍🍽️", "👨🏾‍🍳", "👩🏼‍🍳", "🧑🏻‍🍽️"];
-
-function UserCount() {
-  const count = useMotionValue(520);
-  const rounded = useTransform(count, (v) => Math.round(v).toLocaleString("fr-FR"));
-
-  useEffect(() => {
-    const ctrl = animate(count, 612, { duration: 2, ease: [0.16, 1, 0.3, 1], delay: 0.6 });
-    return ctrl.stop;
-  }, [count]);
-
-  return <motion.span>{rounded}</motion.span>;
-}
 
 export default function LandingHero() {
   return (
@@ -155,20 +141,10 @@ export default function LandingHero() {
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
               className="flex items-center gap-3 mb-7"
             >
-              {/* Avatars */}
-              <div className="flex -space-x-2">
-                {AVATARS.map((a, i) => (
-                  <div key={i} className="w-7 h-7 rounded-full bg-cream-dark border-2 border-cream flex items-center justify-center text-sm leading-none" style={{ zIndex: AVATARS.length - i }}>
-                    {a}
-                  </div>
-                ))}
-              </div>
               <div className="flex items-center gap-1.5 bg-white border border-border/60 rounded-full px-3 py-1.5 shadow-sm">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse flex-shrink-0" />
-                <span className="text-xs font-semibold text-ink font-mono">
-                  <UserCount />
-                </span>
-                <span className="text-xs text-ink-muted">serveurs utilisent ShiftTips</span>
+                <span className="text-xs font-semibold text-ink font-mono">plus de 600</span>
+                <span className="text-xs text-ink-muted">utilisateurs utilisent ShiftTips</span>
               </div>
             </motion.div>
 
