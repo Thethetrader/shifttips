@@ -5,38 +5,23 @@ import { useRef } from "react";
 
 const problems = [
   {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
-        <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" />
-      </svg>
-    ),
+    num: "01",
     title: "Tu oublies des jours",
-    desc: "Une note iPhone, des heures notées au doigt mouillé, et le dimanche soir tu recalcules tout de tête. Erreurs garanties.",
+    desc: "Une note iPhone, des heures notées au doigt mouillé, et le dimanche soir tu recalcules tout de tête.",
     stat: "3 oublis",
     statSub: "par mois en moyenne",
   },
   {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3" />
-        <rect x="9" y="3" width="6" height="8" rx="1" />
-        <path d="M9 12h6M9 16h4" />
-      </svg>
-    ),
+    num: "02",
     title: "Tu calcules à la main",
-    desc: "Fin de mois, tu additionnes des colonnes de chiffres, tu cherches tes fiches de paie, tu compares les heures sup. C'est épuisant.",
+    desc: "Fin de mois, tu additionnes des colonnes de chiffres, tu cherches tes fiches de paie, tu compares les heures sup.",
     stat: "45 min",
     statSub: "perdues chaque fin de mois",
   },
   {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-      </svg>
-    ),
+    num: "03",
     title: "Tes pourboires partent en fumée",
-    desc: "Tu vis avec tes pourboires au quotidien sans jamais voir le total mensuel. Résultat : tu ne réalises pas ce que tu gagnes vraiment.",
+    desc: "Tu vis avec tes pourboires au quotidien sans jamais voir le total mensuel. Tu sous-estimes ce que tu gagnes vraiment.",
     stat: "847 €",
     statSub: "de tips invisibles par mois",
   },
@@ -44,46 +29,49 @@ const problems = [
 
 export default function LandingProblems() {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
-    <section ref={ref} className="py-24 md:py-32 px-5">
+    <section ref={ref} className="py-24 md:py-32 px-5 bg-cream-dark">
       <div className="max-w-6xl mx-auto">
-        {/* Section label */}
+
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-16"
+          className="mb-14"
         >
-          <p className="text-xs font-medium text-ink-muted uppercase tracking-widest mb-3">Le problème</p>
-          <h2 className="text-4xl md:text-5xl font-serif tracking-tight text-ink leading-tight max-w-lg">
-            Ce que vivent la plupart des serveurs
+          <p className="text-xs font-semibold text-ink-muted uppercase tracking-[0.2em] mb-4">Ce que tu vis</p>
+          <h2 className="text-4xl md:text-5xl font-serif tracking-tight text-ink leading-tight max-w-[520px]">
+            Le quotidien de la plupart des serveurs
           </h2>
         </motion.div>
 
-        {/* Zig-zag 2-col layout — not 3 equal columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* Editorial rows — no icon cards */}
+        <div className="flex flex-col divide-y divide-border/60">
           {problems.map((p, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
-              className={`bg-white rounded-3xl p-7 border border-border/60 shadow-card ${i === 2 ? "md:col-span-2 md:max-w-xl" : ""}`}
+              className="py-8 md:py-10 grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-4 md:gap-10 items-start"
             >
-              <div className="flex items-start gap-5">
-                <div className="w-12 h-12 rounded-2xl bg-cream-dark flex items-center justify-center flex-shrink-0 text-ink-muted">
-                  {p.icon}
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-ink mb-2 tracking-tight">{p.title}</h3>
-                  <p className="text-ink-muted text-base leading-relaxed">{p.desc}</p>
-                </div>
+              {/* Big number */}
+              <span className="text-5xl md:text-6xl font-bold text-border/60 font-mono leading-none select-none w-[4ch] flex-shrink-0">
+                {p.num}
+              </span>
+
+              {/* Text */}
+              <div>
+                <h3 className="text-xl md:text-2xl font-semibold text-ink tracking-tight mb-2">{p.title}</h3>
+                <p className="text-ink-muted leading-relaxed max-w-[52ch]">{p.desc}</p>
               </div>
-              <div className="mt-5 pt-5 border-t border-border/60 flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-ink font-mono">{p.stat}</span>
-                <span className="text-sm text-ink-muted">{p.statSub}</span>
+
+              {/* Callout stat */}
+              <div className="md:text-right flex-shrink-0">
+                <p className="text-2xl md:text-3xl font-bold text-ink font-mono">{p.stat}</p>
+                <p className="text-xs text-ink-muted mt-1">{p.statSub}</p>
               </div>
             </motion.div>
           ))}

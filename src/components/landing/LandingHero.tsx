@@ -3,65 +3,68 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-function PhoneMockup() {
+function CalendarPhone() {
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const hasShift = new Set([1,2,4,5,7,8,9,11,12,14,15,16,18,19,21,22,23,25,26,28,29,30]);
+  const today = 17;
+
   return (
-    <div className="relative w-[220px] h-[440px]">
-      {/* Phone frame */}
-      <div className="absolute inset-0 bg-ink rounded-[2.5rem] shadow-[0_40px_80px_-20px_rgba(26,26,24,0.35)] p-2">
-        <div className="w-full h-full bg-cream rounded-[2rem] overflow-hidden">
+    <div className="relative w-[230px] h-[460px]">
+      <div className="absolute inset-0 bg-[#111] rounded-[3rem] shadow-[0_60px_100px_-20px_rgba(0,0,0,0.5)] p-[10px]">
+        <div className="w-full h-full bg-cream rounded-[2.4rem] overflow-hidden flex flex-col">
           {/* Status bar */}
-          <div className="flex items-center justify-between px-5 pt-3 pb-2">
-            <span className="text-[10px] font-semibold text-ink">9:41</span>
-            <div className="w-16 h-4 bg-ink rounded-full opacity-10" />
-            <div className="flex gap-1">
-              <div className="w-3 h-3 rounded-sm bg-ink/20" />
-            </div>
-          </div>
-
-          {/* Month header */}
-          <div className="px-4 pb-2">
-            <p className="text-[9px] text-ink-muted uppercase tracking-widest">Mai 2026</p>
-            <div className="flex gap-1.5 mt-1.5">
-              <div className="flex-1 bg-white rounded-xl p-2 shadow-sm">
-                <p className="text-[8px] text-ink-muted">Heures</p>
-                <p className="text-xs font-bold text-ink font-mono">142h</p>
-              </div>
-              <div className="flex-1 bg-emerald rounded-xl p-2">
-                <p className="text-[8px] text-white/60">Tips</p>
-                <p className="text-xs font-bold text-white font-mono">847€</p>
-              </div>
-              <div className="flex-1 bg-white rounded-xl p-2 shadow-sm">
-                <p className="text-[8px] text-ink-muted">Services</p>
-                <p className="text-xs font-bold text-ink font-mono">21</p>
+          <div className="flex items-center justify-between px-5 pt-3 pb-1 flex-shrink-0">
+            <span className="text-[10px] font-bold text-ink">9:41</span>
+            <div className="flex gap-1 items-center">
+              <svg width="12" height="8" viewBox="0 0 12 8" fill="currentColor" className="text-ink/40"><rect x="0" y="2" width="2" height="6" rx="0.5"/><rect x="3" y="1" width="2" height="7" rx="0.5"/><rect x="6" y="0" width="2" height="8" rx="0.5"/><rect x="9" y="0" width="2" height="8" rx="0.5" opacity="0.3"/></svg>
+              <svg width="12" height="9" viewBox="0 0 12 9" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-ink/40"><path d="M1 4.5C2.5 2 4.5 1 6 1s3.5 1 5 3.5"/><path d="M3 6.5C3.8 5.3 4.8 4.5 6 4.5s2.2.8 3 2"/><circle cx="6" cy="8" r="0.8" fill="currentColor"/></svg>
+              <div className="flex items-center gap-0.5 text-ink/40">
+                <div className="w-5 h-2.5 rounded-sm border border-current flex items-center px-0.5"><div className="w-3 h-1.5 bg-current rounded-[1px]"/></div>
               </div>
             </div>
           </div>
 
-          {/* Mini calendar */}
-          <div className="px-4">
+          {/* App header */}
+          <div className="px-4 pb-2 flex-shrink-0">
+            <p className="text-[8px] text-ink-muted uppercase tracking-[0.15em]">Mai 2026</p>
+            <div className="grid grid-cols-3 gap-1.5 mt-1.5">
+              <div className="bg-white rounded-xl p-2 shadow-sm">
+                <p className="text-[7px] text-ink-muted leading-none mb-0.5">Heures</p>
+                <p className="text-[11px] font-bold text-ink font-mono leading-none">142h</p>
+              </div>
+              <div className="bg-emerald rounded-xl p-2">
+                <p className="text-[7px] text-white/60 leading-none mb-0.5">Tips</p>
+                <p className="text-[11px] font-bold text-white font-mono leading-none">847€</p>
+              </div>
+              <div className="bg-white rounded-xl p-2 shadow-sm">
+                <p className="text-[7px] text-ink-muted leading-none mb-0.5">Services</p>
+                <p className="text-[11px] font-bold text-ink font-mono leading-none">21</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Calendar */}
+          <div className="px-3 flex-1">
             <div className="grid grid-cols-7 mb-1">
               {["L","M","M","J","V","S","D"].map((d, i) => (
-                <div key={i} className="text-center text-[7px] text-ink-faint font-medium">{d}</div>
+                <div key={i} className="text-center text-[6.5px] text-ink-faint font-semibold tracking-wide">{d}</div>
               ))}
             </div>
-            <div className="grid grid-cols-7 gap-0.5">
-              {/* Week 1 offset */}
-              <div /><div /><div />
-              {[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28].map((d) => {
-                const hasShift = [1,2,4,5,7,8,9,11,12,14,15,16,18,19,21,22,23,25,26,28].includes(d);
-                const isToday = d === 17;
+            {/* offset 3 (Thu = Wednesday start) */}
+            <div className="grid grid-cols-7 gap-[2px]">
+              <div/><div/><div/>
+              {days.map((d) => {
+                const shift = hasShift.has(d);
+                const isToday = d === today;
                 return (
-                  <div
-                    key={d}
-                    className={`aspect-square rounded-md flex flex-col items-center justify-center
-                      ${isToday ? "ring-1 ring-emerald/40" : ""}
-                      ${hasShift ? "bg-emerald-50" : "bg-white/60"}
-                    `}
-                  >
-                    <span className={`text-[7px] font-semibold leading-none ${isToday ? "text-emerald" : hasShift ? "text-emerald-700" : "text-ink-muted"}`}>
-                      {d}
-                    </span>
-                    {hasShift && <div className="w-1 h-1 rounded-full bg-emerald mt-0.5 opacity-80" />}
+                  <div key={d} className={`aspect-square rounded-[5px] flex flex-col items-center justify-center relative
+                    ${isToday ? "ring-1 ring-emerald ring-offset-0" : ""}
+                    ${shift ? "bg-emerald/10" : "bg-white/50"}
+                  `}>
+                    <span className={`text-[7px] font-semibold leading-none
+                      ${isToday ? "text-emerald" : shift ? "text-emerald-700" : "text-ink-faint"}
+                    `}>{d}</span>
+                    {shift && <div className="w-[3px] h-[3px] rounded-full bg-emerald mt-[1px]"/>}
                   </div>
                 );
               })}
@@ -69,36 +72,37 @@ function PhoneMockup() {
           </div>
 
           {/* FAB */}
-          <div className="absolute bottom-8 right-5 w-9 h-9 bg-emerald rounded-xl flex items-center justify-center shadow-[0_4px_12px_rgba(15,81,50,0.4)]">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
+          <div className="relative flex justify-end px-4 pb-4 flex-shrink-0 mt-1">
+            <div className="w-9 h-9 bg-emerald rounded-[14px] flex items-center justify-center shadow-[0_4px_12px_rgba(15,81,50,0.4)]">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Floating tip card */}
       <motion.div
-        animate={{ y: [0, -6, 0] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -right-12 top-16 bg-white rounded-2xl px-3 py-2.5 shadow-[0_8px_24px_rgba(26,26,24,0.12)] border border-border/60 w-32"
+        animate={{ y: [0, -7, 0] }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -right-16 top-20 bg-white rounded-2xl px-3 py-2.5 shadow-[0_12px_32px_rgba(26,26,24,0.15)] border border-border/50 w-[118px]"
       >
-        <p className="text-[8px] text-ink-muted uppercase tracking-wider mb-1">Hier soir</p>
-        <p className="text-sm font-bold text-ink font-mono">+47€</p>
-        <div className="flex items-center gap-1 mt-0.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald" />
-          <p className="text-[8px] text-emerald font-medium">Service enregistré</p>
+        <p className="text-[7.5px] text-ink-muted uppercase tracking-wider mb-1">Samedi soir</p>
+        <p className="text-[15px] font-bold text-ink font-mono leading-none">+65 €</p>
+        <div className="flex items-center gap-1 mt-1.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald flex-shrink-0"/>
+          <p className="text-[7.5px] text-emerald font-semibold">Enregistré · 11h30</p>
         </div>
       </motion.div>
 
+      {/* Heures sup badge */}
       <motion.div
-        animate={{ y: [0, 5, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute -left-14 bottom-24 bg-emerald rounded-2xl px-3 py-2.5 shadow-[0_8px_24px_rgba(15,81,50,0.3)] w-28"
+        animate={{ y: [0, 6, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
+        className="absolute -left-14 bottom-28 bg-ink rounded-2xl px-3 py-2.5 shadow-[0_12px_32px_rgba(0,0,0,0.2)] w-[106px]"
       >
-        <p className="text-[8px] text-white/60 uppercase tracking-wider mb-1">Ce mois</p>
-        <p className="text-sm font-bold text-white font-mono">847 €</p>
-        <p className="text-[8px] text-white/60">en pourboires</p>
+        <p className="text-[7.5px] text-white/40 uppercase tracking-wider mb-1">Heures sup</p>
+        <p className="text-[15px] font-bold text-white font-mono leading-none">+12h</p>
+        <p className="text-[7.5px] text-white/40 mt-1">ce mois</p>
       </motion.div>
     </div>
   );
@@ -106,109 +110,93 @@ function PhoneMockup() {
 
 export default function LandingHero() {
   return (
-    <section className="min-h-[100dvh] flex items-center pt-16">
+    <section className="min-h-[100dvh] flex items-center pt-20 pb-12">
       <div className="max-w-6xl mx-auto px-5 w-full">
-        {/* Asymmetric split — text left, phone right */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-16 md:gap-8 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-20 md:gap-12 items-center">
+
           {/* Left — content */}
-          <div className="max-w-xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          <div className="max-w-[520px]">
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className="text-xs font-semibold text-ink-muted uppercase tracking-[0.2em] mb-6"
             >
-              <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200/60 rounded-full px-4 py-1.5 mb-8">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse-soft" />
-                <span className="text-xs font-medium text-emerald uppercase tracking-widest">100 % gratuit</span>
-              </div>
-            </motion.div>
+              Pour les serveurs et serveuses
+            </motion.p>
 
             <motion.h1
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
-              className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-ink mb-6"
+              transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+              className="font-serif text-[52px] md:text-[68px] leading-[1.02] tracking-tight text-ink mb-6"
             >
-              Tes heures.
+              Tu sais combien
               <br />
-              Tes pourboires.
+              t&rsquo;as bossé.
               <br />
-              <span className="text-emerald">Enfin clairs.</span>
+              <em className="not-italic text-emerald">Mais combien t&rsquo;as gagné&nbsp;?</em>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.16 }}
-              className="text-lg text-ink-muted leading-relaxed max-w-[52ch] mb-10"
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.14 }}
+              className="text-[17px] text-ink-muted leading-[1.7] max-w-[46ch] mb-10"
             >
-              L&apos;app pour les serveurs qui veulent arrêter de calculer à la main
-              et enfin voir ce qu&apos;ils gagnent vraiment — heures et pourboires inclus.
+              ShiftTips t&rsquo;aide à enregistrer chaque service en 3 taps —
+              et te donne le total heures, pourboires et heures sup à la fin du mois.
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.22 }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
               className="flex flex-col sm:flex-row gap-3"
             >
               <Link
                 href="/signup"
-                className="h-14 px-8 bg-emerald text-white font-semibold text-base rounded-2xl flex items-center justify-center transition-all active:scale-[0.98] active:-translate-y-px hover:bg-emerald-light shadow-[0_8px_24px_rgba(15,81,50,0.3)]"
+                className="h-[54px] px-8 bg-emerald text-white font-semibold text-[15px] rounded-2xl flex items-center justify-center transition-all active:scale-[0.97] hover:bg-emerald-light shadow-[0_8px_28px_rgba(15,81,50,0.28)]"
               >
                 Commencer gratuitement
               </Link>
               <Link
                 href="/login"
-                className="h-14 px-8 bg-cream-dark text-ink font-medium text-base rounded-2xl flex items-center justify-center transition-all hover:bg-border border border-border"
+                className="h-[54px] px-8 text-ink-muted font-medium text-[15px] rounded-2xl flex items-center justify-center transition-all hover:text-ink"
               >
-                Se connecter
+                J&rsquo;ai déjà un compte →
               </Link>
             </motion.div>
 
-            <motion.p
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.35 }}
-              className="mt-4 text-sm text-ink-muted"
+              transition={{ delay: 0.4 }}
+              className="mt-10 pt-8 border-t border-border/50 flex flex-wrap gap-6"
             >
-              Installable sur iPhone et Android. Aucune carte bancaire.
-            </motion.p>
+              {[
+                { val: "100 %", label: "gratuit, sans pub" },
+                { val: "3 taps", label: "pour saisir un service" },
+                { val: "iOS + Android", label: "installable en PWA" },
+              ].map(({ val, label }) => (
+                <div key={val}>
+                  <p className="text-[15px] font-bold text-ink font-mono">{val}</p>
+                  <p className="text-[12px] text-ink-muted mt-0.5">{label}</p>
+                </div>
+              ))}
+            </motion.div>
           </div>
 
-          {/* Right — phone mockup */}
+          {/* Right — phone */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.92, x: 20 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.2 }}
-            className="hidden md:flex justify-center md:justify-end pr-8"
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 80, damping: 22, delay: 0.18 }}
+            className="hidden md:flex justify-center md:justify-end pr-6"
           >
-            <PhoneMockup />
+            <CalendarPhone />
           </motion.div>
         </div>
-
-        {/* Social proof bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="flex items-center gap-6 mt-16 pt-8 border-t border-border/60"
-        >
-          <div className="flex -space-x-2">
-            {["Felix","Clara","Marco"].map((name) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={name}
-                src={`https://ui-avatars.com/api/?name=${name}&background=0F5132&color=fff&size=40&bold=true`}
-                alt={name}
-                className="w-9 h-9 rounded-full border-2 border-cream"
-              />
-            ))}
-          </div>
-          <p className="text-sm text-ink-muted">
-            <span className="text-ink font-semibold">+120 serveurs</span> suivent déjà leurs pourboires
-          </p>
-        </motion.div>
       </div>
     </section>
   );

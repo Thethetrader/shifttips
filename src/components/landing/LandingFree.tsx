@@ -24,15 +24,11 @@ export default function LandingFree() {
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="bg-emerald rounded-[2.5rem] p-8 md:p-12 overflow-hidden relative"
+          className="bg-emerald rounded-[2.5rem] p-8 md:p-12"
         >
-          {/* Decorative circle */}
-          <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-emerald-light/30 pointer-events-none" />
-          <div className="absolute -bottom-12 -left-12 w-48 h-48 rounded-full bg-emerald-dim/40 pointer-events-none" />
-
-          <div className="relative grid md:grid-cols-[1fr_auto] gap-10 items-center">
+          <div className="grid md:grid-cols-[1fr_auto] gap-10 items-center">
             <div>
-              <p className="text-white/60 text-xs font-medium uppercase tracking-widest mb-4">Pricing</p>
+              <p className="text-white/50 text-xs font-semibold uppercase tracking-[0.2em] mb-4">Sans frais, sans surprise</p>
               <h2 className="text-4xl md:text-5xl font-serif tracking-tight text-white leading-tight mb-4">
                 100 % gratuit.
                 <br />
@@ -70,6 +66,7 @@ export default function LandingFree() {
             </div>
           </div>
         </motion.div>
+
       </div>
     </section>
   );
