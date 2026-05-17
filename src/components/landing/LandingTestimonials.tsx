@@ -9,21 +9,21 @@ const testimonials = [
     role: "Serveuse · Brasserie Lipp, Paris 6e",
     initial: "CR",
     color: "bg-emerald",
-    quote: "J'avais toujours peur de rater des heures en fin de mois. Maintenant je sais exactement combien j'ai travaillé, et j'ai réalisé que mes pourboires représentaient 38 % de mon revenu réel. Ça change tout.",
+    quote: "Je savais pas que mes pourboires pesaient autant. Avec ShiftTips j'ai vu que sur le mois j'avais touché 920 € de tips. Avant je les dépensais sans même les compter. Maintenant je les mets de côté.",
   },
   {
     name: "Théo M.",
     role: "Serveur · Hôtel Molitor",
     initial: "TM",
     color: "bg-ink",
-    quote: "L'app se souvient de tout à ma place. Le bouton pour saisir le service du jour, c'est vraiment 2 taps et c'est réglé. J'aurais jamais cru qu'une app aussi simple puisse m'économiser autant de stress.",
+    quote: "Je note mon service en 10 secondes à la fin du shift. Fin de mois, le total est là, je vois mes heures sup, mes jours de repos dus. Ça prend zéro énergie et ça m'a évité une vraie embrouille avec mon patron.",
   },
   {
     name: "Nadia B.",
-    role: "Responsable de salle · L'Ami Jean",
+    role: "Serveuse · L'Ami Jean, Paris",
     initial: "NB",
     color: "bg-emerald",
-    quote: "J'ai recommandé ShiftTips à toute mon équipe. La moitié calculaient leurs heures sup à la main depuis des années. Là c'est automatique, et ça a évité pas mal de tensions avec la direction.",
+    quote: "J'ai enfin un vrai suivi. Je voyais jamais où partaient mes pourboires. Là en trois semaines j'ai déjà mieux géré mon budget que les six derniers mois.",
   },
 ];
 
