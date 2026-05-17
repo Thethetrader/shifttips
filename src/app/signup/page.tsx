@@ -56,8 +56,13 @@ export default function SignupPage() {
       // Otherwise, email confirmation is required
       setConfirmationSent(true);
       setLoading(false);
-    } catch {
-      setError("Une erreur s'est produite. Vérifie ta connexion et réessaie.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.toLowerCase().includes("rate limit") || msg.includes("429")) {
+        setError("Trop de tentatives. Attends quelques minutes et réessaie.");
+      } else {
+        setError("Erreur : " + msg);
+      }
       setLoading(false);
     }
   }
