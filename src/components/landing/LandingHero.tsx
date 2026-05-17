@@ -128,8 +128,8 @@ export default function LandingHero() {
               <Image
                 src="/icons/icon-192.png"
                 alt="Shiftips"
-                width={44}
-                height={44}
+                width={48}
+                height={48}
                 className="rounded-2xl shadow-[0_4px_16px_rgba(15,81,50,0.2)]"
               />
               <span className="font-semibold text-ink tracking-tight text-lg">Shiftips</span>

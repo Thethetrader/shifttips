@@ -37,9 +37,9 @@ export default function LandingFooter() {
             <Image
               src="/icons/icon-192.png"
               alt="Shiftips"
-              width={36}
-              height={36}
-              className="w-9 h-9 rounded-xl flex-shrink-0"
+              width={40}
+              height={40}
+              className="w-10 h-10 rounded-xl flex-shrink-0"
             />
             <div>
               <p className="font-semibold text-white text-sm leading-none">Shiftips</p>

@@ -56,8 +56,8 @@ export default function LoginPage() {
       >
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 mb-10">
-          <div className="w-8 h-8 rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(15,81,50,0.15)] bg-white flex-shrink-0">
-            <Image src="/logo.jpg" alt="Shiftips" width={32} height={32} className="w-full h-full object-contain" />
+          <div className="w-[35px] h-[35px] rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(15,81,50,0.15)] bg-white flex-shrink-0">
+            <Image src="/logo.jpg" alt="Shiftips" width={35} height={35} className="w-full h-full object-contain" />
           </div>
           <span className="font-semibold text-ink tracking-tight">Shiftips</span>
         </Link>

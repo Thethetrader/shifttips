@@ -17,9 +17,9 @@ export default function LandingNav() {
           <Image
             src="/icons/icon-192.png"
             alt="Shiftips"
-            width={32}
-            height={32}
-            className="w-8 h-8 rounded-xl shadow-[0_2px_8px_rgba(15,81,50,0.15)] flex-shrink-0"
+            width={35}
+            height={35}
+            className="w-[35px] h-[35px] rounded-xl shadow-[0_2px_8px_rgba(15,81,50,0.15)] flex-shrink-0"
           />
           <span className="font-semibold text-ink tracking-tight">Shiftips</span>
         </Link>
