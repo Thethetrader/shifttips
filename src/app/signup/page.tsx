@@ -27,25 +27,39 @@ export default function SignupPage() {
       return;
     }
 
-    const supabase = createClient();
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.signUp({ email, password });
 
-    if (error) {
-      setError(error.message);
+      if (error) {
+        const msg = error.message.toLowerCase();
+        if (msg.includes("rate limit") || msg.includes("429")) {
+          setError("Trop de tentatives. Attends quelques minutes et réessaie.");
+        } else if (msg.includes("already registered") || msg.includes("user already exists")) {
+          setError("Cet email est déjà utilisé. Connecte-toi à la place.");
+        } else if (msg.includes("invalid email")) {
+          setError("Adresse email invalide.");
+        } else {
+          setError("Une erreur s'est produite. Réessaie.");
+        }
+        setLoading(false);
+        return;
+      }
+
+      // If session exists, email confirmation is disabled — go straight to app
+      if (data.session) {
+        router.push("/app");
+        router.refresh();
+        return;
+      }
+
+      // Otherwise, email confirmation is required
+      setConfirmationSent(true);
       setLoading(false);
-      return;
+    } catch {
+      setError("Une erreur s'est produite. Vérifie ta connexion et réessaie.");
+      setLoading(false);
     }
-
-    // If session exists, email confirmation is disabled — go straight to app
-    if (data.session) {
-      router.push("/app");
-      router.refresh();
-      return;
-    }
-
-    // Otherwise, email confirmation is required
-    setConfirmationSent(true);
-    setLoading(false);
   }
 
   return (

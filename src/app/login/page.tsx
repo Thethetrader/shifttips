@@ -20,21 +20,29 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) {
-      if (error.message.toLowerCase().includes("email") && error.message.toLowerCase().includes("confirm")) {
-        setError("Confirme ton email avant de te connecter. Vérifie ta boîte mail.");
-      } else {
-        setError("Email ou mot de passe incorrect.");
+      if (error) {
+        const msg = error.message.toLowerCase();
+        if (msg.includes("confirm")) {
+          setError("Confirme ton email avant de te connecter. Vérifie ta boîte mail.");
+        } else if (msg.includes("rate limit")) {
+          setError("Trop de tentatives. Attends quelques minutes et réessaie.");
+        } else {
+          setError("Email ou mot de passe incorrect.");
+        }
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-      return;
-    }
 
-    router.push("/app");
-    router.refresh();
+      router.push("/app");
+      router.refresh();
+    } catch {
+      setError("Une erreur s'est produite. Vérifie ta connexion et réessaie.");
+      setLoading(false);
+    }
   }
 
   return (
