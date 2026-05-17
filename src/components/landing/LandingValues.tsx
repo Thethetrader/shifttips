@@ -10,7 +10,7 @@ const values = [
   },
   {
     headline: "Ton budget, enfin visible.",
-    body: "Pourboires, heures sup, jours de repos — tout est calculé automatiquement. Tu sais exactement ce que tu gagnes.",
+    body: "Pourboires, heures sup, jours de repos : tout est calculé automatiquement. Tu sais exactement ce que tu gagnes.",
   },
 ];
 
