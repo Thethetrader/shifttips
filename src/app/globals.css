@@ -1,0 +1,91 @@
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #FAFAF7;
+    --foreground: #1A1A18;
+    --card: #FFFFFF;
+    --card-foreground: #1A1A18;
+    --popover: #FFFFFF;
+    --popover-foreground: #1A1A18;
+    --primary: #0F5132;
+    --primary-foreground: #FAFAF7;
+    --secondary: #F0EFE8;
+    --secondary-foreground: #1A1A18;
+    --muted: #F0EFE8;
+    --muted-foreground: #6B6B5F;
+    --accent: #C9A961;
+    --accent-foreground: #1A1A18;
+    --destructive: #C0392B;
+    --border: #E2E0D8;
+    --input: #E2E0D8;
+    --ring: #0F5132;
+    --radius: 0.75rem;
+
+    /* ShiftTips custom */
+    --emerald: #0F5132;
+    --emerald-light: #1A7A4C;
+    --emerald-dim: #0A3B24;
+    --gold: #C9A961;
+    --gold-light: #D4B878;
+    --cream: #FAFAF7;
+    --cream-dark: #F0EFE8;
+    --ink: #1A1A18;
+    --ink-muted: #6B6B5F;
+  }
+
+  * {
+    @apply border-border;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Tap target minimum */
+  button, a, [role="button"] {
+    min-height: 44px;
+  }
+
+  /* Scrollbar minimal */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+
+  .shadow-diffuse {
+    box-shadow: 0 20px 40px -15px rgba(15, 81, 50, 0.08);
+  }
+
+  .shadow-card {
+    box-shadow: 0 1px 3px rgba(26, 26, 24, 0.06), 0 4px 16px -4px rgba(26, 26, 24, 0.06);
+  }
+
+  .emerald-glow {
+    box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.15);
+  }
+}
