@@ -15,13 +15,12 @@ export default function LandingNav() {
       <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
           <Image
-            src="/icons/icon-192.png"
+            src="/logovide.png"
             alt="Shiftips"
-            width={70}
-            height={70}
-            className="w-[70px] h-[70px] rounded-xl shadow-[0_2px_8px_rgba(15,81,50,0.15)] flex-shrink-0"
+            width={230}
+            height={92}
+            className="h-[92px] w-auto flex-shrink-0"
           />
-          <span className="font-semibold text-ink tracking-tight">Shiftips</span>
         </Link>
 
         <Link

@@ -77,10 +77,7 @@ export default function SignupPage() {
         className="w-full max-w-sm"
       >
         <Link href="/" className="flex items-center gap-2 mb-10">
-          <div className="w-[70px] h-[70px] rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(15,81,50,0.15)] bg-white flex-shrink-0">
-            <Image src="/logo.jpg" alt="Shiftips" width={70} height={70} className="w-full h-full object-contain" />
-          </div>
-          <span className="font-semibold text-ink tracking-tight">Shiftips</span>
+          <Image src="/logovide.png" alt="Shiftips" width={600} height={240} className="h-28 w-auto flex-shrink-0" />
         </Link>
 
         <AnimatePresence mode="wait">

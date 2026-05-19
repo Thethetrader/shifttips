@@ -35,16 +35,13 @@ export default function LandingFooter() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <Image
-              src="/icons/icon-192.png"
+              src="/logovide.png"
               alt="Shiftips"
-              width={80}
-              height={80}
-              className="w-20 h-20 rounded-xl flex-shrink-0"
+              width={600}
+              height={240}
+              className="h-16 w-auto flex-shrink-0 brightness-0 invert"
             />
-            <div>
-              <p className="font-semibold text-white text-sm leading-none">Shiftips</p>
-              <p className="text-white/30 text-[11px] mt-0.5">Suivi heures et pourboires</p>
-            </div>
+            <p className="text-white/30 text-[11px]">Suivi heures et pourboires</p>
           </Link>
 
           <div className="flex flex-wrap items-center gap-6 text-sm text-white/40">
@@ -57,7 +54,7 @@ export default function LandingFooter() {
             <Link href="/contact" className="hover:text-white/70 transition-colors">
               Contact
             </Link>
-            <span className="text-white/20">©&nbsp;2026 Shiftips</span>
+            <span className="text-white/20">©&nbsp;2026 Shyftips</span>
           </div>
         </div>
       </div>

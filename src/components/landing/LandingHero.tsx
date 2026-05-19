@@ -123,16 +123,15 @@ export default function LandingHero() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 18 }}
-              className="flex items-center gap-3 mb-8"
+              className="flex items-center gap-3 -mb-4"
             >
               <Image
-                src="/icons/icon-192.png"
+                src="/logovide.png"
                 alt="Shiftips"
-                width={96}
-                height={96}
-                className="rounded-2xl shadow-[0_4px_16px_rgba(15,81,50,0.2)]"
+                width={600}
+                height={240}
+                className="h-64 w-auto"
               />
-              <span className="font-semibold text-ink tracking-tight text-lg">Shiftips</span>
             </motion.div>
 
             {/* Social proof pill */}
