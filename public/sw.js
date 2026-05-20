@@ -1,4 +1,4 @@
-const CACHE_NAME = "shyftips-v1";
+const CACHE_NAME = "shyftips-v2";
 const SHELL_URLS = [
   "/",
   "/app",

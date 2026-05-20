@@ -195,7 +195,7 @@ export default function LandingHero() {
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.14 }}
               className="text-[17px] text-ink-muted leading-[1.7] max-w-[46ch] mb-10"
             >
-              Note tes tips et tes heures en 3 taps après chaque service, et envoie ton récap au responsable en un clic.
+              3 taps après le service. Tes heures, tes tips, tout est là. Plus jamais tu repars sans savoir combien t'as fait.
             </motion.p>
 
             <motion.div

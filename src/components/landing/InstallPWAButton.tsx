@@ -112,9 +112,10 @@ const ANDROID_STEPS = [
 interface InstallPWAButtonProps {
   label?: string;
   className?: string;
+  showIcon?: boolean;
 }
 
-export default function InstallPWAButton({ label = "Télécharger l'app", className = "" }: InstallPWAButtonProps) {
+export default function InstallPWAButton({ label = "Télécharger l'app", className = "", showIcon = false }: InstallPWAButtonProps) {
   const [open, setOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -144,6 +145,12 @@ export default function InstallPWAButton({ label = "Télécharger l'app", classN
   return (
     <>
       <button onClick={handleClick} className={className}>
+        {showIcon && (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 16l-4-4h3V4h2v8h3l-4 4z"/>
+            <path d="M4 20h16"/>
+          </svg>
+        )}
         {label}
       </button>
 
