@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Tab = "iphone" | "android";
 
+// Modal d'instructions pour iOS (Safari ne supporte pas beforeinstallprompt)
 function InstallModal({ onClose }: { onClose: () => void }) {
   const [tab, setTab] = useState<Tab>("iphone");
 
@@ -13,7 +14,6 @@ function InstallModal({ onClose }: { onClose: () => void }) {
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
       onClick={onClose}
     >
-      {/* Backdrop */}
       <motion.div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         initial={{ opacity: 0 }}
@@ -21,7 +21,6 @@ function InstallModal({ onClose }: { onClose: () => void }) {
         exit={{ opacity: 0 }}
       />
 
-      {/* Panel */}
       <motion.div
         className="relative bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden"
         initial={{ opacity: 0, y: 40, scale: 0.96 }}
@@ -30,7 +29,6 @@ function InstallModal({ onClose }: { onClose: () => void }) {
         transition={{ type: "spring", stiffness: 280, damping: 26 }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="px-6 pt-6 pb-4">
           <div className="flex items-center justify-between mb-1">
             <h2 className="text-xl font-serif tracking-tight text-ink">Installer Shyftips</h2>
@@ -44,7 +42,6 @@ function InstallModal({ onClose }: { onClose: () => void }) {
           <p className="text-sm text-ink-muted">Ajoute l&apos;app sur ton écran d&apos;accueil — gratuit, sans App Store.</p>
         </div>
 
-        {/* Tabs */}
         <div className="px-6 mb-4">
           <div className="flex gap-2 bg-ink/5 rounded-2xl p-1">
             {([["iphone", "🍎 iPhone"], ["android", "🤖 Android"]] as [Tab, string][]).map(([t, label]) => (
@@ -64,7 +61,6 @@ function InstallModal({ onClose }: { onClose: () => void }) {
           </div>
         </div>
 
-        {/* Steps */}
         <div className="px-6 pb-6">
           <AnimatePresence mode="wait">
             <motion.ol
@@ -120,10 +116,34 @@ interface InstallPWAButtonProps {
 
 export default function InstallPWAButton({ label = "Télécharger l'app", className = "" }: InstallPWAButtonProps) {
   const [open, setOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  async function handleClick() {
+    if (deferredPrompt) {
+      // Chrome/Android : déclenche le prompt natif du navigateur
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      setDeferredPrompt(null);
+    } else {
+      // iOS Safari ou déjà installé : affiche le modal d'instructions
+      setOpen(true);
+    }
+  }
 
   return (
     <>
-      <button onClick={() => setOpen(true)} className={className}>
+      <button onClick={handleClick} className={className}>
         {label}
       </button>
 

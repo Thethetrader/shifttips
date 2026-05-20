@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "SFTPS",
+    title: "Shyftips",
   },
   openGraph: {
     type: "website",
