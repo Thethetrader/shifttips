@@ -4,7 +4,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 
-const STEPS = ["Installe l'app", "Saisis un service", "Vois ton revenu"];
+const STEPS = ["Installe l'app", "Saisis un service", "Vois ton revenu", "Configure ton profil"];
 const DURATION = 3500;
 
 /* ── Écran 1 : Calendrier avec FAB pulsant ── */
@@ -183,10 +183,94 @@ function ScreenRecap() {
   );
 }
 
+/* ── Écran 4 : Réglages — restaurant, contrat, planning type ── */
+function ScreenSettings() {
+  const [restaurantTyped, setRestaurantTyped] = useState("");
+  const fullName = "Le Grand Café";
+
+  useEffect(() => {
+    let i = 0;
+    const t = setInterval(() => {
+      i++;
+      setRestaurantTyped(fullName.slice(0, i));
+      if (i >= fullName.length) clearInterval(t);
+    }, 80);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div className="flex flex-col h-full px-3 pb-3 gap-2">
+      <p className="text-[7px] text-ink-muted uppercase tracking-[0.15em] mt-1 mb-1">Mes réglages</p>
+
+      {/* Identité */}
+      <div className="bg-white rounded-xl p-2.5 shadow-sm">
+        <p className="text-[5.5px] text-ink-muted uppercase tracking-wider mb-1.5">Établissement</p>
+        <div className="h-6 bg-cream rounded-lg flex items-center px-2">
+          <p className="text-[8px] font-semibold text-ink font-mono">
+            {restaurantTyped}<span className="opacity-60 animate-pulse">|</span>
+          </p>
+        </div>
+      </div>
+
+      {/* Contrat */}
+      <div className="bg-white rounded-xl p-2.5 shadow-sm">
+        <p className="text-[5.5px] text-ink-muted uppercase tracking-wider mb-1.5">Contrat</p>
+        <div className="grid grid-cols-4 gap-1 mb-2">
+          {["CDI","CDD","Extra","App."].map((t, i) => (
+            <motion.div
+              key={t}
+              animate={i === 0 ? { backgroundColor: "#0F5132" } : { backgroundColor: "#f5f5f3" }}
+              className="rounded-lg h-5 flex items-center justify-center"
+            >
+              <span className={`text-[5.5px] font-bold ${i === 0 ? "text-white" : "text-ink-muted"}`}>{t}</span>
+            </motion.div>
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-1.5">
+          <div>
+            <p className="text-[5px] text-ink-muted mb-1">Heures / sem.</p>
+            <div className="h-5 bg-cream rounded-lg flex items-center justify-between px-1.5">
+              <span className="text-[8px] font-bold font-mono text-ink">39</span>
+              <span className="text-[6px] text-ink-muted">h</span>
+            </div>
+          </div>
+          <div>
+            <p className="text-[5px] text-ink-muted mb-1">Repos / sem.</p>
+            <div className="h-5 bg-cream rounded-lg flex items-center justify-between px-1.5">
+              <span className="text-[8px] font-bold font-mono text-ink">2</span>
+              <span className="text-[6px] text-ink-muted">j</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Planning type */}
+      <div className="bg-white rounded-xl p-2.5 shadow-sm">
+        <p className="text-[5.5px] text-ink-muted uppercase tracking-wider mb-1.5">Planning type</p>
+        <div className="flex flex-col gap-1">
+          {[
+            { day: "Lun", active: false },
+            { day: "Mar", active: true, h: "17:00–23:30" },
+            { day: "Mer", active: true, h: "11:00–15:00" },
+            { day: "Jeu", active: false },
+            { day: "Ven", active: true, h: "17:00–00:00" },
+          ].map((r) => (
+            <div key={r.day} className={`flex items-center justify-between h-5 rounded-lg px-2 ${r.active ? "bg-emerald" : "bg-cream"}`}>
+              <span className={`text-[6px] font-semibold ${r.active ? "text-white" : "text-ink-muted"}`}>{r.day}</span>
+              <span className={`text-[5.5px] font-mono ${r.active ? "text-white/80" : "text-ink-faint"}`}>{r.active ? r.h : "Repos"}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const screens = [
   { component: ScreenCalendar },
   { component: ScreenModal },
   { component: ScreenRecap },
+  { component: ScreenSettings },
 ];
 
 function AnimatedPhone({ step }: { step: number }) {
@@ -228,7 +312,7 @@ export default function LandingHowItWorks() {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => setStep(s => (s + 1) % 3), DURATION);
+    const t = setInterval(() => setStep(s => (s + 1) % 4), DURATION);
     return () => clearInterval(t);
   }, []);
 
@@ -243,7 +327,7 @@ export default function LandingHowItWorks() {
         >
           <p className="text-xs font-semibold text-ink-muted uppercase tracking-[0.2em] mb-4">Comment ça marche</p>
           <h2 className="text-4xl md:text-5xl font-serif tracking-tight text-ink leading-tight">
-            3 taps et c&rsquo;est fait.
+            Simple. Rapide. Fait pour toi.
           </h2>
         </motion.div>
 
