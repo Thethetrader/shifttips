@@ -4,7 +4,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 
-const STEPS = ["Installe l'app", "Saisis un service", "Vois ton revenu", "Configure ton profil"];
+const STEPS = ["Calendrier", "Saisie", "Récap", "Paramètres"];
 const DURATION = 3500;
 
 /* ── Écran 1 : Calendrier avec FAB pulsant ── */
