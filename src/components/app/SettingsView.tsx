@@ -287,7 +287,7 @@ export default function SettingsView({ profile, userId, email }: Props) {
 
       {/* App footer */}
       <div className="mt-6 pt-4 border-t border-border/50 flex flex-col items-center gap-3">
-        <p className="text-xs text-ink-faint">Shiftips · 100 % gratuit · v1.0</p>
+        <p className="text-xs text-ink-faint">Shyftips · 100 % gratuit · v1.0</p>
         <div className="flex items-center gap-4 text-[11px] text-ink-faint">
           <a href="/confidentialite" className="hover:text-ink-muted transition-colors">Confidentialité</a>
           <span className="text-border">·</span>

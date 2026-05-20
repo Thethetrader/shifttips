@@ -36,7 +36,7 @@ export default function LandingFree() {
                 Pour toujours.
               </h2>
               <p className="text-white/70 text-base leading-relaxed max-w-[44ch] mb-8">
-                Shiftips est gratuit et sans pub. Pas d&apos;abonnement, pas de version premium cachée.
+                Shyftips est gratuit et sans pub. Pas d&apos;abonnement, pas de version premium cachée.
                 Ton revenu mérite d&apos;être visible sans frais supplémentaires.
               </p>
               <div className="flex flex-wrap gap-3">

@@ -36,7 +36,7 @@ export default function LandingFooter() {
           <Link href="/" className="flex items-center gap-3">
             <Image
               src="/logovide.png"
-              alt="Shiftips"
+              alt="Shyftips"
               width={600}
               height={240}
               className="h-16 w-auto flex-shrink-0 brightness-0 invert"

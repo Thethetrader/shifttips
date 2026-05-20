@@ -33,7 +33,7 @@ function InstallModal({ onClose }: { onClose: () => void }) {
         {/* Header */}
         <div className="px-6 pt-6 pb-4">
           <div className="flex items-center justify-between mb-1">
-            <h2 className="text-xl font-serif tracking-tight text-ink">Installer Shiftips</h2>
+            <h2 className="text-xl font-serif tracking-tight text-ink">Installer Shyftips</h2>
             <button
               onClick={onClose}
               className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center text-ink/40 hover:text-ink transition-colors"
@@ -98,7 +98,7 @@ function InstallModal({ onClose }: { onClose: () => void }) {
 }
 
 const IPHONE_STEPS = [
-  <>Ouvre <strong>shiftips.fr</strong> dans <strong>Safari</strong></>,
+  <>Ouvre <strong>shyftips.com</strong> dans <strong>Safari</strong></>,
   <>Appuie sur le bouton <strong>Partager</strong> <span className="inline-block">📤</span> en bas de l&apos;écran</>,
   <>Fais défiler vers le bas et appuie sur <strong>&ldquo;Sur l&apos;écran d&apos;accueil&rdquo;</strong></>,
   <>Appuie sur <strong>&ldquo;Ajouter&rdquo;</strong> en haut à droite</>,
@@ -106,7 +106,7 @@ const IPHONE_STEPS = [
 ];
 
 const ANDROID_STEPS = [
-  <>Ouvre <strong>shiftips.fr</strong> dans <strong>Chrome</strong></>,
+  <>Ouvre <strong>shyftips.com</strong> dans <strong>Chrome</strong></>,
   <>Appuie sur les <strong>⋮</strong> (3 points) en haut à droite</>,
   <>Appuie sur <strong>&ldquo;Ajouter à l&apos;écran d&apos;accueil&rdquo;</strong> ou <strong>&ldquo;Installer l&apos;application&rdquo;</strong></>,
   <>Confirme en appuyant sur <strong>&ldquo;Installer&rdquo;</strong></>,

@@ -56,7 +56,7 @@ export default function LoginPage() {
       >
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 mb-10">
-          <Image src="/logovide.png" alt="Shiftips" width={600} height={240} className="h-28 w-auto flex-shrink-0" />
+          <Image src="/logovide.png" alt="Shyftips" width={600} height={240} className="h-28 w-auto flex-shrink-0" />
         </Link>
 
         <h1 className="text-2xl font-semibold tracking-tight text-ink mb-1">

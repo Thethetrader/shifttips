@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export const metadata = { title: "Politique de confidentialité — Shiftips" };
+export const metadata = { title: "Politique de confidentialité — Shyftips" };
 
 export default function ConfidentialitePage() {
   return (
@@ -15,7 +15,7 @@ export default function ConfidentialitePage() {
         <div className="prose prose-sm max-w-none text-ink-muted leading-relaxed space-y-6">
           <section>
             <h2 className="text-xl font-semibold text-ink mb-3">Données collectées</h2>
-            <p>Shiftips collecte uniquement les données que vous saisissez volontairement : adresse email, prénom, nom, informations de contrat, heures travaillées et pourboires. Aucune donnée de localisation, aucun tracking comportemental.</p>
+            <p>Shyftips collecte uniquement les données que vous saisissez volontairement : adresse email, prénom, nom, informations de contrat, heures travaillées et pourboires. Aucune donnée de localisation, aucun tracking comportemental.</p>
           </section>
           <section>
             <h2 className="text-xl font-semibold text-ink mb-3">Stockage et sécurité</h2>
@@ -23,7 +23,7 @@ export default function ConfidentialitePage() {
           </section>
           <section>
             <h2 className="text-xl font-semibold text-ink mb-3">Partage des données</h2>
-            <p>Vos données ne sont jamais vendues, partagées ou transmises à des tiers. Elles ne sont utilisées qu&apos;au sein de l&apos;application Shiftips.</p>
+            <p>Vos données ne sont jamais vendues, partagées ou transmises à des tiers. Elles ne sont utilisées qu&apos;au sein de l&apos;application Shyftips.</p>
           </section>
           <section>
             <h2 className="text-xl font-semibold text-ink mb-3">Vos droits</h2>

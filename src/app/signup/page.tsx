@@ -77,7 +77,7 @@ export default function SignupPage() {
         className="w-full max-w-sm"
       >
         <Link href="/" className="flex items-center gap-2 mb-10">
-          <Image src="/logovide.png" alt="Shiftips" width={600} height={240} className="h-28 w-auto flex-shrink-0" />
+          <Image src="/logovide.png" alt="Shyftips" width={600} height={240} className="h-28 w-auto flex-shrink-0" />
         </Link>
 
         <AnimatePresence mode="wait">

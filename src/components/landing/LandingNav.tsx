@@ -16,7 +16,7 @@ export default function LandingNav() {
         <Link href="/" className="flex items-center gap-2.5">
           <Image
             src="/logovide.png"
-            alt="Shiftips"
+            alt="Shyftips"
             width={230}
             height={92}
             className="h-[92px] w-auto flex-shrink-0"

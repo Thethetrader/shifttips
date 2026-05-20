@@ -1,14 +1,14 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Contact | Shiftips" };
+export const metadata: Metadata = { title: "Contact | Shyftips" };
 
 export default function ContactPage() {
   return (
     <div className="min-h-[100dvh] bg-white px-5 pt-20 pb-16">
       <div className="max-w-xl mx-auto">
         <Link href="/" className="text-xs text-ink-muted uppercase tracking-widest hover:text-ink transition-colors">
-          ← Shiftips
+          ← Shyftips
         </Link>
 
         <h1 className="text-4xl font-serif tracking-tight text-ink mt-8 mb-4">Contact</h1>
@@ -19,7 +19,7 @@ export default function ContactPage() {
 
         <div className="flex flex-col gap-4">
           <a
-            href="mailto:bonjour@shiftips.app"
+            href="mailto:bonjour@shyftips.app"
             className="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-emerald/30 hover:bg-emerald/5 transition-all group"
           >
             <div className="w-10 h-10 rounded-xl bg-emerald/10 flex items-center justify-center flex-shrink-0 group-hover:bg-emerald/20 transition-colors">
@@ -30,7 +30,7 @@ export default function ContactPage() {
             </div>
             <div>
               <p className="font-semibold text-ink text-sm">Email</p>
-              <p className="text-ink-muted text-sm">bonjour@shiftips.app</p>
+              <p className="text-ink-muted text-sm">bonjour@shyftips.app</p>
             </div>
           </a>
 

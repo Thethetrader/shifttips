@@ -1,6 +1,6 @@
 {
-  "name": "Shiftips",
-  "short_name": "Shiftips",
+  "name": "Shyftips",
+  "short_name": "Shyftips",
   "description": "Suis tes heures et pourboires en 3 taps. Récap mensuel automatique.",
   "start_url": "/app",
   "display": "standalone",
