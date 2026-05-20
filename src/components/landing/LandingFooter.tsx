@@ -24,8 +24,10 @@ export default function LandingFooter() {
               Commencer gratuitement
             </Link>
             <InstallPWAButton
-              label="📲 Télécharger l'app"
-              className="inline-flex h-12 px-7 bg-white/10 text-white font-medium text-sm rounded-xl items-center transition-all hover:bg-white/20"
+              label="Télécharger l'app"
+              subLabel="iOS · Android · gratuit"
+              showIcon
+              className="inline-flex h-12 px-5 border border-white/20 bg-white/5 text-white font-semibold text-sm rounded-xl items-center gap-3 transition-all hover:bg-white/10 hover:border-white/30"
             />
           </div>
         </div>

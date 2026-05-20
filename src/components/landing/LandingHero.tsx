@@ -162,10 +162,19 @@ export default function LandingHero() {
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
               className="flex items-center gap-3 mb-7"
             >
-              <div className="flex items-center gap-1.5 bg-white border border-border/60 rounded-full px-3 py-1.5 shadow-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse flex-shrink-0" />
-                <span className="text-xs font-semibold text-ink font-mono"><CountUp target={600} /></span>
-                <span className="text-xs text-ink-muted">serveurs l&apos;utilisent déjà</span>
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {["#A8C5A0", "#6FAF83", "#3D8B5E", "#1E6B42"].map((color, i) => (
+                    <div
+                      key={i}
+                      className="w-7 h-7 rounded-full border-2 border-cream flex-shrink-0"
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
+                </div>
+                <p className="text-sm text-ink-muted">
+                  <span className="font-bold text-ink font-mono"><CountUp target={600} /></span> serveurs l&apos;utilisent déjà
+                </p>
               </div>
             </motion.div>
 
@@ -211,8 +220,10 @@ export default function LandingHero() {
                 Commencer gratuitement
               </Link>
               <InstallPWAButton
-                label="📲 Télécharger l'app"
-                className="h-[54px] px-8 bg-ink/5 text-ink font-semibold text-[15px] rounded-2xl flex items-center justify-center transition-all active:scale-[0.97] hover:bg-ink/10"
+                label="Télécharger l'app"
+                subLabel="iOS · Android · gratuit"
+                showIcon
+                className="h-[54px] px-6 border border-ink/15 bg-white text-ink font-semibold text-[15px] rounded-2xl flex items-center gap-3 transition-all active:scale-[0.97] hover:border-ink/30 hover:shadow-sm"
               />
             </motion.div>
 
