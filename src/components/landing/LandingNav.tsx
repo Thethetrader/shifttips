@@ -27,7 +27,7 @@ export default function LandingNav() {
         <div className="flex items-center gap-2">
           <InstallPWAButton
             label="📲 Télécharger"
-            className="hidden sm:flex h-10 px-4 bg-ink/5 text-ink text-sm font-medium rounded-xl transition-all active:scale-95 hover:bg-ink/10 items-center"
+            className="flex h-10 px-4 bg-ink/5 text-ink text-sm font-medium rounded-xl transition-all active:scale-95 hover:bg-ink/10 items-center"
           />
           <Link
             href="/signup"
