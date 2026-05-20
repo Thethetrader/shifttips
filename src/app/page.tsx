@@ -13,8 +13,8 @@ export default function HomePage() {
     <div className="bg-white min-h-[100dvh] overflow-x-hidden">
       <LandingNav />
       <LandingHero />
-      <LandingValues />
       <LandingProblems />
+      <LandingValues />
       <LandingHowItWorks />
       <LandingFree />
       <LandingTestimonials />
