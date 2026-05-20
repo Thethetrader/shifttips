@@ -128,48 +128,6 @@ function TipsCounter() {
   );
 }
 
-/* ── Animation 4 : feuille d'émargement incorrecte ── */
-function WrongTimesheet() {
-  const rows = [
-    { day: "Lundi", employer: "8h30", real: "8h00" },
-    { day: "Mardi", employer: "—", real: "6h30" },
-    { day: "Mercredi", employer: "7h00", real: "8h00" },
-    { day: "Jeudi", employer: "6h00", real: "7h30" },
-  ];
-  const [highlighted, setHighlighted] = useState(1);
-
-  useEffect(() => {
-    const t = setInterval(() => setHighlighted(i => (i + 1) % rows.length), 1800);
-    return () => clearInterval(t);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return (
-    <div className="w-[220px] font-mono text-xs">
-      <div className="grid grid-cols-3 gap-1 mb-2 text-[10px] text-ink-muted uppercase tracking-wider px-1">
-        <span></span><span className="text-center">Employeur</span><span className="text-center text-emerald font-bold">Shyftips</span>
-      </div>
-      {rows.map((r, i) => (
-        <motion.div
-          key={i}
-          animate={i === highlighted ? { backgroundColor: "#fef2f2" } : { backgroundColor: "#f9f9f7" }}
-          className="grid grid-cols-3 gap-1 rounded-lg px-3 py-2 mb-1 items-center"
-        >
-          <span className="text-ink text-[11px]">{r.day}</span>
-          <motion.span
-            animate={i === highlighted ? { color: "#ef4444" } : { color: "#9c9c8e" }}
-            className="text-center"
-          >
-            {r.employer}
-            {i === highlighted && <span className="ml-0.5">✗</span>}
-          </motion.span>
-          <span className="text-center text-emerald font-bold">{r.real}</span>
-        </motion.div>
-      ))}
-    </div>
-  );
-}
-
 const problems = [
   {
     num: "01",
@@ -200,16 +158,6 @@ const problems = [
     statColor: "text-[#C9A961]",
     animation: <TipsCounter />,
     animBg: "bg-amber-50",
-  },
-  {
-    num: "04",
-    quote: "La feuille d'émargement ne correspond pas à ce que j'ai vraiment fait.",
-    headline: "L'employeur ne compte pas toujours bien tes heures.",
-    stat: "1 sur 3",
-    statSub: "des fiches de paie comportent une erreur",
-    statColor: "text-red-500",
-    animation: <WrongTimesheet />,
-    animBg: "bg-red-50",
   },
 ];
 
