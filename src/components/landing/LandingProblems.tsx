@@ -149,16 +149,6 @@ const problems = [
     animation: <WrongCalcLight />,
     animBg: "bg-gray-50",
   },
-  {
-    num: "03",
-    quote: "Je vis avec mes pourboires.",
-    headline: "Tes tips disparaissent.",
-    stat: "847 €",
-    statSub: "de tips invisibles par mois",
-    statColor: "text-[#C9A961]",
-    animation: <TipsCounter />,
-    animBg: "bg-amber-50",
-  },
 ];
 
 function ProblemRow({ p, i }: { p: typeof problems[0]; i: number }) {
