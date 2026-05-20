@@ -140,7 +140,7 @@ const values = [
     num: "01",
     quote: "J'ai rien noté, j'sais même plus combien j'ai fait.",
     headline: "Tes heures, sauvegardées pour de bon.",
-    body: "Chaque service reste dans ta poche. S’il y a un doute sur tes heures, tu as tout sous la main.",
+    body: "Chaque service reste dans ta poche. S’il y a un doute sur tes heures, tu as tout sous la main — et tu peux l’envoyer à ton responsable en un clic.",
     animation: <HoursProof />,
     animBg: "bg-emerald/5",
   },
