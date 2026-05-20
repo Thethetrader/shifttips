@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import InstallPWAButton from "@/components/landing/InstallPWAButton";
 
 export default function LandingNav() {
   return (
@@ -23,12 +24,18 @@ export default function LandingNav() {
           />
         </Link>
 
-        <Link
-          href="/signup"
-          className="h-10 px-5 bg-emerald text-white text-sm font-medium rounded-xl transition-all active:scale-95 hover:bg-emerald-light shadow-[0_2px_8px_rgba(15,81,50,0.25)] flex items-center"
-        >
-          Commencer
-        </Link>
+        <div className="flex items-center gap-2">
+          <InstallPWAButton
+            label="📲 Télécharger"
+            className="hidden sm:flex h-10 px-4 bg-ink/5 text-ink text-sm font-medium rounded-xl transition-all active:scale-95 hover:bg-ink/10 items-center"
+          />
+          <Link
+            href="/signup"
+            className="h-10 px-5 bg-emerald text-white text-sm font-medium rounded-xl transition-all active:scale-95 hover:bg-emerald-light shadow-[0_2px_8px_rgba(15,81,50,0.25)] flex items-center"
+          >
+            Commencer
+          </Link>
+        </div>
       </div>
     </motion.header>
   );
