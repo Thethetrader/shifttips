@@ -144,7 +144,7 @@ export default function LandingHero() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 18 }}
-              className="hidden md:flex items-center gap-3 -mb-4"
+              className="hidden items-center gap-3 -mb-4"
             >
               <Image
                 src="/logovide.png"
@@ -195,7 +195,7 @@ export default function LandingHero() {
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.14 }}
               className="text-[17px] text-ink-muted leading-[1.7] max-w-[46ch] mb-10"
             >
-              Note tes tips et tes heures en 3 taps après chaque service. À la fin du mois, t&rsquo;as tout — sans avoir rien compté dans ta tête.
+              Note tes heures et tes tips en 3 taps après chaque service. À la fin du mois, t&rsquo;as tout sans avoir rien compté dans ta tête.
             </motion.p>
 
             <motion.div
