@@ -1,9 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { format, getDaysInMonth, addMonths, subMonths } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   BarChart,
   Bar,
@@ -29,7 +30,7 @@ interface Props {
   shifts: Shift[];
   prevShifts: Shift[];
   ytdShifts: Pick<Shift, "tips">[];
-  profile: { weekly_hours: number; weekly_rest_days: number; contract_type: string | null };
+  profile: { weekly_hours: number; weekly_rest_days: number; contract_type: string | null; first_name?: string | null; last_name?: string | null };
   currentMonth: Date;
 }
 
@@ -77,8 +78,186 @@ function StatCard({
   );
 }
 
+function generateAndPrintPDF(
+  shifts: Shift[],
+  profile: Props["profile"],
+  restaurantName: string,
+  currentMonth: Date,
+) {
+  const monthLabel = format(currentMonth, "MMMM yyyy", { locale: fr });
+  const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "—";
+
+  const rows = shifts
+    .slice()
+    .sort((a, b) => a.shift_date.localeCompare(b.shift_date))
+    .map((s) => {
+      const dateLabel = format(new Date(s.shift_date + "T12:00:00"), "EEEE d MMMM", { locale: fr });
+      const start = s.start_time ? s.start_time.slice(0, 5) : "—";
+      const end = s.end_time ? s.end_time.slice(0, 5) : "—";
+      const hWorked = formatHours(s.hours_worked || 0);
+      return `<tr>
+        <td style="padding:10px 16px;border-bottom:1px solid #eee;text-transform:capitalize">${dateLabel}</td>
+        <td style="padding:10px 16px;border-bottom:1px solid #eee;text-align:center;font-family:monospace">${start}</td>
+        <td style="padding:10px 16px;border-bottom:1px solid #eee;text-align:center;font-family:monospace">${end}</td>
+        <td style="padding:10px 16px;border-bottom:1px solid #eee;text-align:right;font-family:monospace;font-weight:600">${hWorked}</td>
+      </tr>`;
+    })
+    .join("");
+
+  const totalH = formatHours(shifts.reduce((s, sh) => s + (sh.hours_worked || 0), 0));
+
+  const html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Relevé d'heures – ${monthLabel}</title>
+  <style>
+    @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color:#1a1a18; background:#fff; padding:40px; }
+    .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:36px; padding-bottom:24px; border-bottom:2px solid #1a1a18; }
+    .brand { font-size:22px; font-weight:800; letter-spacing:-0.5px; color:#0f5132; }
+    .brand span { color:#1a1a18; }
+    .meta { text-align:right; }
+    .meta h1 { font-size:26px; font-weight:700; letter-spacing:-0.5px; text-transform:capitalize; }
+    .meta p { font-size:14px; color:#666; margin-top:4px; }
+    .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px; }
+    .info-box { background:#f9f9f7; border-radius:12px; padding:16px 20px; }
+    .info-box label { font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:#888; display:block; margin-bottom:4px; }
+    .info-box strong { font-size:17px; font-weight:600; }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    thead tr { background:#f9f9f7; }
+    th { padding:12px 16px; text-align:left; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:#888; }
+    th:last-child, td:last-child { text-align:right; }
+    th:nth-child(2), th:nth-child(3), td:nth-child(2), td:nth-child(3) { text-align:center; }
+    .total-row { background:#f0faf5; }
+    .total-row td { padding:12px 16px; font-weight:700; font-size:15px; }
+    .footer { margin-top:40px; padding-top:20px; border-top:1px solid #eee; display:flex; justify-content:space-between; font-size:11px; color:#aaa; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand">Shyf<span>tips</span></div>
+    <div class="meta">
+      <h1>${monthLabel}</h1>
+      <p>Relevé d'heures</p>
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-box">
+      <label>Employé·e</label>
+      <strong>${fullName}</strong>
+    </div>
+    <div class="info-box">
+      <label>Établissement</label>
+      <strong>${restaurantName || "—"}</strong>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Début</th>
+        <th>Fin</th>
+        <th>Heures</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rows}
+      <tr class="total-row">
+        <td colspan="3">Total du mois</td>
+        <td>${totalH}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <span>Généré avec Shyftips · shyftips.com</span>
+    <span>Document à usage interne – ne pas diffuser</span>
+  </div>
+</body>
+</html>`;
+
+  const win = window.open("", "_blank");
+  if (!win) return;
+  win.document.write(html);
+  win.document.close();
+  setTimeout(() => win.print(), 400);
+}
+
+function ExportSheet({
+  onClose,
+  onExport,
+  defaultName,
+}: {
+  onClose: () => void;
+  onExport: (restaurant: string) => void;
+  defaultName: string;
+}) {
+  const [restaurant, setRestaurant] = useState(defaultName);
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-ink/40 backdrop-blur-sm z-40"
+        onClick={onClose}
+      />
+      <motion.div
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="fixed bottom-0 left-0 right-0 z-50 bg-cream rounded-t-[2rem] pb-safe"
+      >
+        <div className="flex justify-center pt-3 pb-4">
+          <div className="w-10 h-1 bg-border rounded-full" />
+        </div>
+        <div className="px-5 pb-8">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-ink tracking-tight">Exporter mes heures</h2>
+            <p className="text-sm text-ink-muted mt-1">Génère un PDF à envoyer à ton responsable</p>
+          </div>
+
+          <div className="flex flex-col gap-2 mb-6">
+            <label className="text-sm font-medium text-ink">Nom du restaurant / établissement</label>
+            <input
+              type="text"
+              value={restaurant}
+              onChange={(e) => setRestaurant(e.target.value)}
+              placeholder="Le Grand Café"
+              className="h-12 bg-white border border-border rounded-xl text-ink text-base px-4 focus:outline-none focus:border-emerald focus:ring-2 focus:ring-emerald/20"
+            />
+          </div>
+
+          <div className="bg-cream-dark rounded-2xl px-4 py-3 mb-6">
+            <p className="text-xs text-ink-muted">
+              Le PDF contiendra tes dates, heures de début/fin et total d&rsquo;heures. Les pourboires ne sont pas inclus.
+            </p>
+          </div>
+
+          <button
+            onClick={() => onExport(restaurant)}
+            className="w-full h-14 bg-emerald text-white font-semibold text-base rounded-2xl transition-all active:scale-[0.98] shadow-[0_8px_24px_rgba(15,81,50,0.25)] hover:bg-emerald-light flex items-center justify-center gap-2"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Télécharger le PDF
+          </button>
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
 export default function RecapView({ shifts, prevShifts, ytdShifts, profile, currentMonth }: Props) {
   const router = useRouter();
+  const [exportOpen, setExportOpen] = useState(false);
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
 
@@ -94,19 +273,17 @@ export default function RecapView({ shifts, prevShifts, ytdShifts, profile, curr
   const prevTotalTips = calcTotalTips(prevShifts);
 
   const overtimeHours = calcOvertimeHours(totalHours, profile.weekly_hours);
-  const theoreticalRestDays = calcTheoreticalRestDays(profile.weekly_rest_days, totalHours, profile.weekly_hours);
-  const workedDays = shifts.length;
   const daysInMonth = getDaysInMonth(currentMonth);
+  const theoreticalRestDays = calcTheoreticalRestDays(profile.weekly_rest_days, daysInMonth);
+  const workedDays = shifts.length;
   const restTaken = daysInMonth - workedDays;
 
   const tipsChange = calcChangePercent(totalTips, prevTotalTips);
   const hoursChange = calcChangePercent(totalHours, prevTotalHours);
   const ytdTips = ytdShifts.reduce((sum, s) => sum + (s.tips || 0), 0);
 
-  // Heures prévues = mensualisation légale (hebdo × 52/12)
   const plannedHours = monthlyContractHours(profile.weekly_hours);
 
-  // Chart data: tips per day of month
   const chartData = Array.from({ length: daysInMonth }, (_, i) => {
     const d = i + 1;
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
@@ -146,21 +323,10 @@ export default function RecapView({ shifts, prevShifts, ytdShifts, profile, curr
         </div>
       </motion.div>
 
-      {/* Stats grid — asymmetric 2-col */}
+      {/* Stats grid */}
       <div className="grid grid-cols-2 gap-3 mb-6">
-        <StatCard
-          label="Total heures"
-          value={formatHours(totalHours)}
-          change={hoursChange}
-          index={0}
-        />
-        <StatCard
-          label="Pourboires"
-          value={formatTips(totalTips)}
-          change={tipsChange}
-          accent
-          index={1}
-        />
+        <StatCard label="Total heures" value={formatHours(totalHours)} change={hoursChange} index={0} />
+        <StatCard label="Pourboires" value={formatTips(totalTips)} change={tipsChange} accent index={1} />
         <StatCard
           label="Heures sup"
           value={overtimeHours > 0 ? formatHours(overtimeHours) : "—"}
@@ -272,7 +438,7 @@ export default function RecapView({ shifts, prevShifts, ytdShifts, profile, curr
         className="bg-cream-dark rounded-2xl px-4 py-3 mb-4"
       >
         <p className="text-xs text-ink-muted">
-          Les jours de repos sont calculés de façon déclarative : jours du mois sans service enregistré.
+          Les jours de repos théoriques sont calculés sur la base des semaines dans le mois ({daysInMonth} jours).
         </p>
       </motion.div>
 
@@ -281,7 +447,7 @@ export default function RecapView({ shifts, prevShifts, ytdShifts, profile, curr
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.45 }}
-        className="bg-white rounded-3xl p-5 border border-border/60 shadow-card flex items-center justify-between gap-4"
+        className="bg-white rounded-3xl p-5 border border-border/60 shadow-card flex items-center justify-between gap-4 mb-6"
       >
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-ink-muted mb-1">
@@ -296,6 +462,33 @@ export default function RecapView({ shifts, prevShifts, ytdShifts, profile, curr
           🏆
         </div>
       </motion.div>
+
+      {/* Export button */}
+      <motion.button
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.5 }}
+        onClick={() => setExportOpen(true)}
+        className="w-full h-14 bg-white border border-border/60 shadow-card text-ink font-semibold text-base rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] hover:bg-cream-dark"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+        </svg>
+        Envoyer mes heures au manager
+      </motion.button>
+
+      <AnimatePresence>
+        {exportOpen && (
+          <ExportSheet
+            onClose={() => setExportOpen(false)}
+            defaultName=""
+            onExport={(restaurant) => {
+              setExportOpen(false);
+              generateAndPrintPDF(shifts, profile, restaurant, currentMonth);
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -16,7 +16,7 @@ import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/client";
 import ShiftModal from "@/components/app/ShiftModal";
 import type { Shift, ScheduleTemplate } from "@/lib/supabase/types";
-import { shiftsToDateMap, formatTips } from "@/lib/calculations";
+import { shiftsToDateMap, formatTips, formatHours } from "@/lib/calculations";
 
 const DAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
@@ -142,7 +142,7 @@ export default function CalendarView({ initialShifts, userId, firstName, schedul
           <div className="flex-1 bg-white rounded-2xl px-4 py-3 shadow-card">
             <p className="text-xs text-ink-muted mb-0.5">Heures</p>
             <p className="text-lg font-semibold text-ink font-mono">
-              {totalHours.toFixed(1).replace(".", "h")}
+              {formatHours(totalHours)}
             </p>
           </div>
           <div className="flex-1 bg-emerald rounded-2xl px-4 py-3 shadow-card">

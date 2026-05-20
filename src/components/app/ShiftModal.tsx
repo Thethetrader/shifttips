@@ -72,8 +72,6 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
 
     const supabase = createClient();
     const payload = {
-      user_id: userId,
-      shift_date: dateStr,
       start_time: startTime + ":00",
       end_time: endTime + ":00",
       hours_worked: netHours,
@@ -81,14 +79,30 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
       note: note || null,
     };
 
-    const { data, error } = await supabase
-      .from("shifts")
-      .upsert(payload, { onConflict: "user_id,shift_date" })
-      .select()
-      .single();
+    let data: Shift | null = null;
+    let dbError: { message: string } | null = null;
+
+    if (existingShift?.id) {
+      const res = await supabase
+        .from("shifts")
+        .update(payload)
+        .eq("id", existingShift.id)
+        .select()
+        .single();
+      data = res.data as Shift | null;
+      dbError = res.error;
+    } else {
+      const res = await supabase
+        .from("shifts")
+        .insert({ user_id: userId, shift_date: dateStr, ...payload })
+        .select()
+        .single();
+      data = res.data as Shift | null;
+      dbError = res.error;
+    }
 
     setSaving(false);
-    if (error) { setError("Erreur lors de l'enregistrement."); return; }
+    if (dbError) { setError("Erreur lors de l'enregistrement."); return; }
     if (data) onSaved(data as Shift);
   }
 

@@ -10,6 +10,7 @@ const features = [
   "Saisie en 3 taps",
   "Récap heures + pourboires",
   "Calcul heures sup automatique",
+  "Export PDF pour ton manager",
   "Installable iOS & Android",
   "Données 100 % privées",
 ];
