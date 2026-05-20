@@ -2,8 +2,29 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
 import InstallPWAButton from "@/components/landing/InstallPWAButton";
+
+function CountUp({ target }: { target: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    let frame = 0;
+    const totalFrames = 60;
+    const timer = setInterval(() => {
+      frame++;
+      setCount(Math.floor((frame / totalFrames) * target));
+      if (frame >= totalFrames) { setCount(target); clearInterval(timer); }
+    }, 20);
+    return () => clearInterval(timer);
+  }, [inView, target]);
+
+  return <span ref={ref}>{count}+</span>;
+}
 
 function CalendarPhone() {
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -123,7 +144,7 @@ export default function LandingHero() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 18 }}
-              className="flex items-center gap-3 -mb-4"
+              className="hidden md:flex items-center gap-3 -mb-4"
             >
               <Image
                 src="/logovide.png"
@@ -143,8 +164,8 @@ export default function LandingHero() {
             >
               <div className="flex items-center gap-1.5 bg-white border border-border/60 rounded-full px-3 py-1.5 shadow-sm">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse flex-shrink-0" />
-                <span className="text-xs font-semibold text-ink font-mono">+ de 600</span>
-                <span className="text-xs text-ink-muted">utilisateurs utilisent Shyftips</span>
+                <span className="text-xs font-semibold text-ink font-mono"><CountUp target={600} /></span>
+                <span className="text-xs text-ink-muted">serveurs l&apos;utilisent déjà</span>
               </div>
             </motion.div>
 
@@ -163,11 +184,9 @@ export default function LandingHero() {
               transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
               className="font-serif text-[52px] md:text-[68px] leading-[1.02] tracking-tight text-ink mb-6"
             >
-              Tu sais combien
+              Fin de service.
               <br />
-              t&rsquo;as bossé.
-              <br />
-              <em className="not-italic text-emerald">Mais combien t&rsquo;as gagné&nbsp;?</em>
+              <em className="not-italic text-emerald">Combien t&rsquo;as touché&nbsp;?</em>
             </motion.h1>
 
             <motion.p
@@ -176,7 +195,7 @@ export default function LandingHero() {
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.14 }}
               className="text-[17px] text-ink-muted leading-[1.7] max-w-[46ch] mb-10"
             >
-              Shyftips t&rsquo;aide à enregistrer chaque service en 3 taps et te donne le total heures, pourboires et heures sup à la fin du mois.
+              Note tes tips et tes heures en 3 taps après chaque service. À la fin du mois, t&rsquo;as tout — sans avoir rien compté dans ta tête.
             </motion.p>
 
             <motion.div
