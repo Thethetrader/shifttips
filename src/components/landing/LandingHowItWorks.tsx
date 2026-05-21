@@ -332,47 +332,58 @@ export default function LandingHowItWorks() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-12 items-center">
-          {/* Phone — mobile top */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={inView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.2 }}
-            className="flex md:hidden justify-center"
-          >
-            <AnimatedPhone step={step} />
-          </motion.div>
-
-          {/* Steps — left */}
+          {/* Steps */}
           <div className="flex flex-col gap-1">
             {STEPS.map((label, i) => (
-              <motion.button
+              <motion.div
                 key={i}
-                onClick={() => setStep(i)}
                 initial={{ opacity: 0, x: -20 }}
                 animate={inView ? { opacity: 1, x: 0 } : {}}
                 transition={{ delay: i * 0.12, type: "spring", stiffness: 100, damping: 20 }}
-                className="text-left py-6 border-b border-border/60 last:border-0 group relative"
               >
-                {/* Progress bar */}
-                {step === i && (
-                  <motion.div
-                    key={`bar-${i}`}
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: DURATION / 1000, ease: "linear" }}
-                    style={{ transformOrigin: "left" }}
-                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-emerald"
-                  />
-                )}
-                <div className="flex items-center gap-6">
-                  <span className={`text-xs font-mono font-bold tracking-widest transition-colors duration-300 w-6 ${step === i ? "text-emerald" : "text-border"}`}>
-                    0{i + 1}
-                  </span>
-                  <span className={`font-semibold tracking-tight transition-all duration-300 ${step === i ? "text-ink text-xl" : "text-ink-muted text-base"}`}>
-                    {label}
-                  </span>
+                <button
+                  onClick={() => setStep(i)}
+                  className="w-full text-left py-6 border-b border-border/60 group relative"
+                >
+                  {step === i && (
+                    <motion.div
+                      key={`bar-${i}`}
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: DURATION / 1000, ease: "linear" }}
+                      style={{ transformOrigin: "left" }}
+                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-emerald"
+                    />
+                  )}
+                  <div className="flex items-center gap-6">
+                    <span className={`text-xs font-mono font-bold tracking-widest transition-colors duration-300 w-6 ${step === i ? "text-emerald" : "text-border"}`}>
+                      0{i + 1}
+                    </span>
+                    <span className={`font-semibold tracking-tight transition-all duration-300 ${step === i ? "text-ink text-xl" : "text-ink-muted text-base"}`}>
+                      {label}
+                    </span>
+                  </div>
+                </button>
+
+                {/* Phone inline sous l'étape active — mobile uniquement */}
+                <div className="md:hidden">
+                  <AnimatePresence>
+                    {step === i && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ type: "spring", stiffness: 120, damping: 22 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="flex justify-center py-8">
+                          <AnimatedPhone step={step} />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              </motion.button>
+              </motion.div>
             ))}
 
             <motion.div
@@ -390,7 +401,7 @@ export default function LandingHowItWorks() {
             </motion.div>
           </div>
 
-          {/* Animated phone — desktop right */}
+          {/* Phone fixe à droite — desktop uniquement */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
