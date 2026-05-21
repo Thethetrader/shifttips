@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 
 const testimonials = [
   {
@@ -35,6 +35,64 @@ function Avatar({ initial, color }: { initial: string; color: string }) {
   );
 }
 
+function MobileCarousel() {
+  const [current, setCurrent] = useState(0);
+  const [dir, setDir] = useState(1);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setDir(1);
+      setCurrent(c => (c + 1) % testimonials.length);
+    }, 4000);
+    return () => clearInterval(t);
+  }, []);
+
+  function goTo(i: number) {
+    setDir(i > current ? 1 : -1);
+    setCurrent(i);
+  }
+
+  const t = testimonials[current];
+
+  return (
+    <div className="relative overflow-hidden">
+      <AnimatePresence mode="wait" custom={dir}>
+        <motion.div
+          key={current}
+          custom={dir}
+          initial={{ opacity: 0, x: dir * 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: dir * -40 }}
+          transition={{ type: "spring", stiffness: 200, damping: 28 }}
+          className="bg-white rounded-3xl p-7 border border-border/60 shadow-card"
+        >
+          <p className="text-[16px] text-ink leading-[1.7] font-serif mb-6">
+            &ldquo;{t.quote}&rdquo;
+          </p>
+          <div className="flex items-center gap-3 pt-5 border-t border-border/60">
+            <Avatar initial={t.initial} color={t.color} />
+            <div>
+              <p className="font-semibold text-ink text-sm">{t.name}</p>
+              <p className="text-xs text-ink-muted">{t.role}</p>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Dots */}
+      <div className="flex justify-center gap-2 mt-5">
+        {testimonials.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? "w-6 bg-emerald" : "w-1.5 bg-ink/20"}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function LandingTestimonials() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
@@ -54,9 +112,18 @@ export default function LandingTestimonials() {
           </h2>
         </motion.div>
 
-        {/* Asymmetric grid — big + 2 stacked */}
-        <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-5">
-          {/* Big */}
+        {/* Mobile : carrousel */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="md:hidden"
+        >
+          <MobileCarousel />
+        </motion.div>
+
+        {/* Desktop : grille asymétrique */}
+        <div className="hidden md:grid md:grid-cols-[3fr_2fr] gap-5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -75,7 +142,6 @@ export default function LandingTestimonials() {
             </div>
           </motion.div>
 
-          {/* 2 stacked */}
           <div className="flex flex-col gap-5">
             {testimonials.slice(1).map((t, i) => (
               <motion.div
