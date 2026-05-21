@@ -112,9 +112,13 @@ function generateHTML(
   <meta charset="UTF-8"/>
   <title>Relevé d'heures – ${monthLabel}</title>
   <style>
-    @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+    @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .top-bar { display:none !important; } }
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color:#1a1a18; background:#fff; padding:40px; }
+    .top-bar { position:fixed; top:0; left:0; right:0; background:#1a1a18; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; z-index:999; }
+    .top-bar button { background:#0f5132; color:white; border:none; border-radius:10px; padding:8px 18px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; }
+    .top-bar span { color:rgba(255,255,255,0.5); font-size:13px; }
+    body { padding-top: 72px; }
     .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:36px; padding-bottom:24px; border-bottom:2px solid #1a1a18; }
     .brand { font-size:22px; font-weight:800; letter-spacing:-0.5px; color:#0f5132; }
     .brand span { color:#1a1a18; }
@@ -136,6 +140,10 @@ function generateHTML(
   </style>
 </head>
 <body>
+  <div class="top-bar">
+    <span>Relevé d'heures · ${monthLabel}</span>
+    <button onclick="window.close()">← Retour à l'app</button>
+  </div>
   <div class="header">
     <div class="brand">Shyf<span>tips</span></div>
     <div class="meta">
