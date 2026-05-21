@@ -78,12 +78,12 @@ function StatCard({
   );
 }
 
-function generateAndPrintPDF(
+function generateHTML(
   shifts: Shift[],
   profile: Props["profile"],
   restaurantName: string,
   currentMonth: Date,
-) {
+): string {
   const monthLabel = format(currentMonth, "MMMM yyyy", { locale: fr });
   const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "—";
 
@@ -180,11 +180,74 @@ function generateAndPrintPDF(
 </body>
 </html>`;
 
+  return html;
+}
+
+function printHTML(html: string) {
   const win = window.open("", "_blank");
   if (!win) return;
   win.document.write(html);
   win.document.close();
   setTimeout(() => win.print(), 400);
+}
+
+function PDFPreview({ html, onClose }: { html: string; onClose: () => void }) {
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-ink/60 backdrop-blur-sm z-40"
+        onClick={onClose}
+      />
+      <motion.div
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="fixed bottom-0 left-0 right-0 z-50 bg-[#1a1a18] rounded-t-[2rem] pb-safe flex flex-col"
+        style={{ height: "90dvh" }}
+      >
+        {/* Handle + header */}
+        <div className="flex items-center justify-between px-5 pt-4 pb-3 flex-shrink-0">
+          <div className="w-10 h-1 bg-white/20 rounded-full absolute left-1/2 -translate-x-1/2 top-3" />
+          <p className="text-white font-semibold text-sm mt-2">Aperçu du document</p>
+          <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/60 hover:text-white mt-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        {/* iFrame preview */}
+        <div className="flex-1 mx-4 mb-4 rounded-2xl overflow-hidden shadow-[0_0_0_1px_rgba(255,255,255,0.08)]">
+          <iframe
+            srcDoc={html}
+            className="w-full h-full bg-white"
+            style={{ transform: "scale(1)", transformOrigin: "top left" }}
+          />
+        </div>
+
+        {/* Actions */}
+        <div className="px-4 pb-6 flex-shrink-0 flex gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 h-14 bg-white/10 text-white font-semibold rounded-2xl"
+          >
+            Fermer
+          </button>
+          <button
+            onClick={() => printHTML(html)}
+            className="flex-1 h-14 bg-emerald text-white font-semibold rounded-2xl flex items-center justify-center gap-2 shadow-[0_8px_24px_rgba(15,81,50,0.4)]"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
+            </svg>
+            Partager / Imprimer
+          </button>
+        </div>
+      </motion.div>
+    </>
+  );
 }
 
 function ExportSheet({
@@ -258,6 +321,7 @@ function ExportSheet({
 export default function RecapView({ shifts, prevShifts, ytdShifts, profile, currentMonth }: Props) {
   const router = useRouter();
   const [exportOpen, setExportOpen] = useState(false);
+  const [previewHTML, setPreviewHTML] = useState<string | null>(null);
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
 
@@ -484,8 +548,18 @@ export default function RecapView({ shifts, prevShifts, ytdShifts, profile, curr
             defaultName=""
             onExport={(restaurant) => {
               setExportOpen(false);
-              generateAndPrintPDF(shifts, profile, restaurant, currentMonth);
+              const html = generateHTML(shifts, profile, restaurant, currentMonth);
+              setPreviewHTML(html);
             }}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {previewHTML && (
+          <PDFPreview
+            html={previewHTML}
+            onClose={() => setPreviewHTML(null)}
           />
         )}
       </AnimatePresence>
