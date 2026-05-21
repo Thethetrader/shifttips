@@ -331,7 +331,17 @@ export default function LandingHowItWorks() {
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-16 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-12 items-center">
+          {/* Phone — mobile top */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.2 }}
+            className="flex md:hidden justify-center"
+          >
+            <AnimatedPhone step={step} />
+          </motion.div>
+
           {/* Steps — left */}
           <div className="flex flex-col gap-1">
             {STEPS.map((label, i) => (
@@ -380,7 +390,7 @@ export default function LandingHowItWorks() {
             </motion.div>
           </div>
 
-          {/* Animated phone — right */}
+          {/* Animated phone — desktop right */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}

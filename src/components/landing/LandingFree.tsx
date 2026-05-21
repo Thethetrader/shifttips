@@ -33,8 +33,6 @@ export default function LandingFree() {
               <p className="text-white/50 text-xs font-semibold uppercase tracking-[0.2em] mb-4">Sans frais, sans surprise</p>
               <h2 className="text-4xl md:text-5xl font-serif tracking-tight text-white leading-tight mb-4">
                 100 % gratuit.
-                <br />
-                Pour toujours.
               </h2>
               <p className="text-white/70 text-base leading-relaxed max-w-[44ch] mb-8">
                 Shyftips est gratuit et sans pub. Pas d&apos;abonnement, pas de version premium cachée.
@@ -48,8 +46,10 @@ export default function LandingFree() {
                   Commencer gratuitement
                 </Link>
                 <InstallPWAButton
-                  label="📲 Télécharger l'app"
-                  className="inline-flex h-14 px-8 bg-white/15 text-white font-semibold text-base rounded-2xl items-center transition-all active:scale-[0.98] hover:bg-white/25"
+                  label="Télécharger l'app"
+                  subLabel="iOS · Android · gratuit"
+                  showIcon
+                  className="inline-flex h-14 px-6 border border-white/25 bg-white/10 text-white font-semibold text-base rounded-2xl items-center gap-3 transition-all active:scale-[0.98] hover:bg-white/20 hover:border-white/40"
                 />
               </div>
             </div>
