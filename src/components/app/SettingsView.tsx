@@ -190,21 +190,19 @@ export default function SettingsView({ profile, userId, workplaces: initialWorkp
           {/* Contrat */}
           <h2 className="text-sm font-semibold text-ink mb-4 uppercase tracking-widest">Contrat</h2>
           <div className="flex flex-col gap-4 mb-5">
-            <div className="grid grid-cols-2 gap-2">
-              {CONTRACT_TYPES.map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setContractType(type)}
-                  className={`h-12 rounded-xl font-medium text-sm transition-all active:scale-95 ${
-                    contractType === type
-                      ? "bg-emerald text-white shadow-[0_4px_12px_rgba(15,81,50,0.25)]"
-                      : "bg-cream border border-border text-ink-muted hover:border-emerald/40"
-                  }`}
-                >
-                  {type}
-                </button>
-              ))}
+            <div className="relative">
+              <select
+                value={contractType}
+                onChange={(e) => setContractType(e.target.value as ContractType)}
+                className="w-full h-12 bg-cream border border-border rounded-xl text-ink text-sm px-4 pr-10 appearance-none focus:outline-none focus:border-emerald focus:ring-2 focus:ring-emerald/20 cursor-pointer"
+              >
+                {CONTRACT_TYPES.map((type) => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+              <svg className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
