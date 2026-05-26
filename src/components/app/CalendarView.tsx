@@ -101,8 +101,6 @@ export default function CalendarView({ initialShifts, userId, firstName, workpla
   const totalTips = shifts.reduce((sum, s) => sum + (s.tips || 0), 0);
   const totalHours = shifts.reduce((sum, s) => sum + (s.hours_worked || 0), 0);
 
-  // Find workplace name for a shift (for calendar dot color hint)
-  const workplaceMap = new Map(workplaces.map((w) => [w.id, w]));
 
   return (
     <div className="flex flex-col min-h-[100dvh] bg-cream">
@@ -186,7 +184,6 @@ export default function CalendarView({ initialShifts, userId, firstName, workpla
             const dateStr = format(day, "yyyy-MM-dd");
             const shift = shiftMap.get(dateStr);
             const today = isToday(day);
-            const wp = shift?.workplace_id ? workplaceMap.get(shift.workplace_id) : null;
 
             return (
               <button
@@ -214,11 +211,6 @@ export default function CalendarView({ initialShifts, userId, firstName, workpla
                     {shift.tips > 0 && (
                       <span className="text-[9px] font-semibold text-emerald leading-none font-mono">
                         {shift.tips}€
-                      </span>
-                    )}
-                    {wp && (
-                      <span className="text-[8px] text-emerald-600 leading-none max-w-[40px] truncate">
-                        {wp.name}
                       </span>
                     )}
                   </div>

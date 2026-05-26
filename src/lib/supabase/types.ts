@@ -2,7 +2,7 @@ export type ContractType = "CDI" | "CDD" | "Extra" | "Apprenti";
 
 // Keys are ISO weekday strings "1"=Lun … "7"=Dim
 export type ScheduleTemplate = {
-  [day: string]: { start: string; end: string };
+  [day: string]: { start: string; end: string; start2?: string; end2?: string };
 };
 
 export interface Profile {

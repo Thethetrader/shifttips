@@ -321,39 +321,112 @@ export default function SettingsView({ profile, userId, workplaces: initialWorkp
                         {!isActive && <span className="text-ink-faint text-xs">Repos</span>}
                       </button>
                       {isActive && active.schedule_template[key] && (
-                        <div className="flex gap-2 px-1">
-                          <div className="flex-1 flex flex-col gap-1">
-                            <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Début</span>
-                            <input
-                              type="time"
-                              value={active.schedule_template[key].start}
-                              onChange={(e) =>
+                        <div className="flex flex-col gap-2 px-1">
+                          {/* Service 1 */}
+                          <div className="flex gap-2">
+                            <div className="flex-1 flex flex-col gap-1">
+                              <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Début</span>
+                              <input
+                                type="time"
+                                value={active.schedule_template[key].start}
+                                onChange={(e) =>
+                                  updateActiveWorkplace({
+                                    schedule_template: {
+                                      ...active.schedule_template,
+                                      [key]: { ...active.schedule_template[key], start: e.target.value },
+                                    },
+                                  })
+                                }
+                                className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
+                              />
+                            </div>
+                            <div className="flex-1 flex flex-col gap-1">
+                              <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Fin</span>
+                              <input
+                                type="time"
+                                value={active.schedule_template[key].end}
+                                onChange={(e) =>
+                                  updateActiveWorkplace({
+                                    schedule_template: {
+                                      ...active.schedule_template,
+                                      [key]: { ...active.schedule_template[key], end: e.target.value },
+                                    },
+                                  })
+                                }
+                                className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Coupure toggle / 2e service */}
+                          {active.schedule_template[key].start2 !== undefined ? (
+                            <div className="flex flex-col gap-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">2e service</span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const { start2: _s, end2: _e, ...rest } = active.schedule_template[key];
+                                    updateActiveWorkplace({
+                                      schedule_template: { ...active.schedule_template, [key]: rest },
+                                    });
+                                  }}
+                                  className="text-[10px] text-destructive hover:bg-red-50 px-2 py-1 rounded-lg"
+                                >
+                                  Suppr.
+                                </button>
+                              </div>
+                              <div className="flex gap-2">
+                                <div className="flex-1 flex flex-col gap-1">
+                                  <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Début</span>
+                                  <input
+                                    type="time"
+                                    value={active.schedule_template[key].start2 || ""}
+                                    onChange={(e) =>
+                                      updateActiveWorkplace({
+                                        schedule_template: {
+                                          ...active.schedule_template,
+                                          [key]: { ...active.schedule_template[key], start2: e.target.value },
+                                        },
+                                      })
+                                    }
+                                    className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
+                                  />
+                                </div>
+                                <div className="flex-1 flex flex-col gap-1">
+                                  <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Fin</span>
+                                  <input
+                                    type="time"
+                                    value={active.schedule_template[key].end2 || ""}
+                                    onChange={(e) =>
+                                      updateActiveWorkplace({
+                                        schedule_template: {
+                                          ...active.schedule_template,
+                                          [key]: { ...active.schedule_template[key], end2: e.target.value },
+                                        },
+                                      })
+                                    }
+                                    className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() =>
                                 updateActiveWorkplace({
                                   schedule_template: {
                                     ...active.schedule_template,
-                                    [key]: { ...active.schedule_template[key], start: e.target.value },
+                                    [key]: { ...active.schedule_template[key], start2: "18:00", end2: "23:30" },
                                   },
                                 })
                               }
-                              className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
-                            />
-                          </div>
-                          <div className="flex-1 flex flex-col gap-1">
-                            <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Fin</span>
-                            <input
-                              type="time"
-                              value={active.schedule_template[key].end}
-                              onChange={(e) =>
-                                updateActiveWorkplace({
-                                  schedule_template: {
-                                    ...active.schedule_template,
-                                    [key]: { ...active.schedule_template[key], end: e.target.value },
-                                  },
-                                })
-                              }
-                              className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
-                            />
-                          </div>
+                              className="self-start text-[11px] text-emerald font-medium px-3 py-1.5 rounded-lg border border-dashed border-emerald/40 hover:bg-emerald/5 transition-colors"
+                            >
+                              + Coupure
+                            </button>
+                          )}
                         </div>
                       )}
                     </div>

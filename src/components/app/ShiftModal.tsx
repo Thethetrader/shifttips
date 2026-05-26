@@ -51,6 +51,9 @@ export default function ShiftModal({ date, existingShift, userId, workplaces = [
 
   const [startTime, setStartTime] = useState(existingShift?.start_time?.slice(0, 5) || tpl?.start || "09:00");
   const [endTime, setEndTime] = useState(existingShift?.end_time?.slice(0, 5) || tpl?.end || "17:00");
+  const [hasSplit, setHasSplit] = useState(!!(tpl?.start2));
+  const [startTime2, setStartTime2] = useState(tpl?.start2 || "18:00");
+  const [endTime2, setEndTime2] = useState(tpl?.end2 || "23:30");
   const [tips, setTips] = useState(existingShift?.tips?.toString() || "");
   const [note, setNote] = useState(existingShift?.note || "");
   const [saving, setSaving] = useState(false);
@@ -60,13 +63,20 @@ export default function ShiftModal({ date, existingShift, userId, workplaces = [
   const dateStr = format(date, "yyyy-MM-dd");
   const displayDate = format(date, "EEEE d MMMM", { locale: fr });
 
-  const rawHours = (() => {
+  const rawHours1 = (() => {
     const r = timeToDecimal(endTime) - timeToDecimal(startTime);
     return r < 0 ? r + 24 : r;
   })();
+  const rawHours2 = hasSplit ? (() => {
+    const r = timeToDecimal(endTime2) - timeToDecimal(startTime2);
+    return r < 0 ? r + 24 : r;
+  })() : 0;
+  const rawHours = rawHours1 + rawHours2;
 
-  const pauseMin = legalPauseMinutes(rawHours);
-  const netHours = Math.max(0, rawHours - pauseMin / 60);
+  const pauseMin1 = legalPauseMinutes(rawHours1);
+  const pauseMin2 = hasSplit ? legalPauseMinutes(rawHours2) : 0;
+  const pauseMin = pauseMin1 + pauseMin2;
+  const netHours = Math.max(0, rawHours1 - pauseMin1 / 60) + Math.max(0, rawHours2 - pauseMin2 / 60);
 
   function handleSelectWorkplace(id: string) {
     setSelectedWorkplaceId(id);
@@ -76,6 +86,13 @@ export default function ShiftModal({ date, existingShift, userId, workplaces = [
       if (t) {
         setStartTime(t.start);
         setEndTime(t.end);
+        if (t.start2 && t.end2) {
+          setHasSplit(true);
+          setStartTime2(t.start2);
+          setEndTime2(t.end2);
+        } else {
+          setHasSplit(false);
+        }
       }
     }
   }
@@ -221,21 +238,34 @@ export default function ShiftModal({ date, existingShift, userId, workplaces = [
               </span>
               <span className="text-lg text-ink-muted font-mono">min</span>
             </div>
-            {pauseMin > 0 && (
-              <div className="flex items-center gap-1.5 text-[11px] text-ink-muted border-t border-border/40 pt-2.5">
-                <span className="font-mono">{formatHM(rawHours)}</span>
-                <span className="opacity-40">−</span>
-                <span className="font-mono">{pauseMin} min pause légale</span>
-                <span className="opacity-40">=</span>
-                <span className="font-mono font-semibold text-ink">{formatHM(netHours)}</span>
+            {(pauseMin1 > 0 || pauseMin2 > 0) && (
+              <div className="flex flex-col gap-1 border-t border-border/40 pt-2.5">
+                {pauseMin1 > 0 && (
+                  <div className="flex items-center gap-1.5 text-[11px] text-ink-muted">
+                    <span className="font-mono">S1 {formatHM(rawHours1)}</span>
+                    <span className="opacity-40">−</span>
+                    <span className="font-mono">{pauseMin1} min</span>
+                    <span className="opacity-40">=</span>
+                    <span className="font-mono font-semibold text-ink">{formatHM(Math.max(0, rawHours1 - pauseMin1 / 60))}</span>
+                  </div>
+                )}
+                {hasSplit && pauseMin2 > 0 && (
+                  <div className="flex items-center gap-1.5 text-[11px] text-ink-muted">
+                    <span className="font-mono">S2 {formatHM(rawHours2)}</span>
+                    <span className="opacity-40">−</span>
+                    <span className="font-mono">{pauseMin2} min</span>
+                    <span className="opacity-40">=</span>
+                    <span className="font-mono font-semibold text-ink">{formatHM(Math.max(0, rawHours2 - pauseMin2 / 60))}</span>
+                  </div>
+                )}
               </div>
             )}
           </div>
 
-          {/* Start / End */}
-          <div className="flex gap-3 mb-5">
+          {/* Service 1 */}
+          <div className="flex gap-3 mb-3">
             <div className="flex-1 flex flex-col gap-2">
-              <Label className="text-sm font-medium text-ink">Début</Label>
+              <Label className="text-sm font-medium text-ink">{hasSplit ? "Début service 1" : "Début"}</Label>
               <Input
                 type="time"
                 value={startTime}
@@ -244,7 +274,7 @@ export default function ShiftModal({ date, existingShift, userId, workplaces = [
               />
             </div>
             <div className="flex-1 flex flex-col gap-2">
-              <Label className="text-sm font-medium text-ink">Fin</Label>
+              <Label className="text-sm font-medium text-ink">{hasSplit ? "Fin service 1" : "Fin"}</Label>
               <Input
                 type="time"
                 value={endTime}
@@ -253,6 +283,52 @@ export default function ShiftModal({ date, existingShift, userId, workplaces = [
               />
             </div>
           </div>
+
+          {/* Coupure / 2e service */}
+          {hasSplit ? (
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-sm font-medium text-ink">Service 2</Label>
+                <button
+                  type="button"
+                  onClick={() => setHasSplit(false)}
+                  className="text-xs text-ink-muted hover:text-destructive px-2 py-1 rounded-lg transition-colors"
+                >
+                  Supprimer
+                </button>
+              </div>
+              <div className="flex gap-3">
+                <div className="flex-1 flex flex-col gap-2">
+                  <Label className="text-sm font-medium text-ink">Début</Label>
+                  <Input
+                    type="time"
+                    value={startTime2}
+                    onChange={(e) => setStartTime2(e.target.value)}
+                    className="h-12 bg-white border-border rounded-xl text-ink text-base focus:border-emerald focus:ring-2 focus:ring-emerald/20"
+                  />
+                </div>
+                <div className="flex-1 flex flex-col gap-2">
+                  <Label className="text-sm font-medium text-ink">Fin</Label>
+                  <Input
+                    type="time"
+                    value={endTime2}
+                    onChange={(e) => setEndTime2(e.target.value)}
+                    className="h-12 bg-white border-border rounded-xl text-ink text-base focus:border-emerald focus:ring-2 focus:ring-emerald/20"
+                  />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="mb-5">
+              <button
+                type="button"
+                onClick={() => setHasSplit(true)}
+                className="text-xs text-emerald font-medium px-3 py-2 rounded-xl border border-dashed border-emerald/40 hover:bg-emerald/5 transition-colors"
+              >
+                + Ajouter coupure
+              </button>
+            </div>
+          )}
 
           {/* Tips */}
           <div className="flex flex-col gap-2 mb-5">
