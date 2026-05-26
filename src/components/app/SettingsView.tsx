@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { Profile, ContractType, ScheduleTemplate } from "@/lib/supabase/types";
+import type { Profile, ContractType, ScheduleTemplate, Workplace } from "@/lib/supabase/types";
 
 const CONTRACT_TYPES: ContractType[] = ["CDI", "CDD", "Extra", "Apprenti"];
 
@@ -23,20 +23,157 @@ const WEEK_DAYS = [
 interface Props {
   profile: Profile | null;
   userId: string;
-  email: string;
+  workplaces: Workplace[];
 }
 
-export default function SettingsView({ profile, userId, email }: Props) {
+interface WorkplaceState {
+  id: string | null;
+  name: string;
+  schedule_template: ScheduleTemplate;
+}
+
+function WorkplaceSection({
+  workplace,
+  onChange,
+  onDelete,
+  index,
+}: {
+  workplace: WorkplaceState;
+  onChange: (updated: WorkplaceState) => void;
+  onDelete: () => void;
+  index: number;
+}) {
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.05 * index }}
+      className="bg-white rounded-3xl p-5 border border-border/60 shadow-card"
+    >
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-semibold text-ink uppercase tracking-widest">
+          Restaurant {index + 1}
+        </h2>
+        <button
+          type="button"
+          onClick={onDelete}
+          className="text-xs text-destructive hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
+        >
+          Supprimer
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-1 mb-4">
+        <Label className="text-sm font-medium text-ink">Nom du restaurant</Label>
+        <Input
+          value={workplace.name}
+          onChange={(e) => onChange({ ...workplace, name: e.target.value })}
+          placeholder="Ex : Chez Mario"
+          className="h-12 bg-cream border-border rounded-xl text-ink"
+        />
+      </div>
+
+      <p className="text-xs text-ink-muted mb-3">
+        Planning type — pré-rempli à la saisie, modifiable à tout moment.
+      </p>
+      <div className="flex flex-col gap-3">
+        {WEEK_DAYS.map(({ key, label }) => {
+          const active = !!workplace.schedule_template[key];
+          return (
+            <div key={key} className="flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const next = { ...workplace.schedule_template };
+                  if (next[key]) { delete next[key]; }
+                  else { next[key] = { start: "17:00", end: "23:30" }; }
+                  onChange({ ...workplace, schedule_template: next });
+                }}
+                className={`flex items-center justify-between h-11 px-4 rounded-xl font-medium text-sm transition-all ${
+                  active
+                    ? "bg-emerald text-white"
+                    : "bg-cream border border-border text-ink-muted"
+                }`}
+              >
+                <span>{label}</span>
+                {active && workplace.schedule_template[key] && (
+                  <span className="text-white/80 text-xs font-mono">
+                    {workplace.schedule_template[key].start} – {workplace.schedule_template[key].end}
+                  </span>
+                )}
+                {!active && <span className="text-ink-faint text-xs">Repos</span>}
+              </button>
+              {active && workplace.schedule_template[key] && (
+                <div className="flex gap-2 px-1">
+                  <div className="flex-1 flex flex-col gap-1">
+                    <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Début</span>
+                    <input
+                      type="time"
+                      value={workplace.schedule_template[key].start}
+                      onChange={(e) =>
+                        onChange({
+                          ...workplace,
+                          schedule_template: {
+                            ...workplace.schedule_template,
+                            [key]: { ...workplace.schedule_template[key], start: e.target.value },
+                          },
+                        })
+                      }
+                      className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
+                    />
+                  </div>
+                  <div className="flex-1 flex flex-col gap-1">
+                    <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Fin</span>
+                    <input
+                      type="time"
+                      value={workplace.schedule_template[key].end}
+                      onChange={(e) =>
+                        onChange({
+                          ...workplace,
+                          schedule_template: {
+                            ...workplace.schedule_template,
+                            [key]: { ...workplace.schedule_template[key], end: e.target.value },
+                          },
+                        })
+                      }
+                      className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </motion.section>
+  );
+}
+
+export default function SettingsView({ profile, userId, workplaces: initialWorkplaces }: Props) {
   const router = useRouter();
   const [firstName, setFirstName] = useState(profile?.first_name || "");
   const [lastName, setLastName] = useState(profile?.last_name || "");
   const [contractType, setContractType] = useState<ContractType>(profile?.contract_type || "CDI");
   const [weeklyHours, setWeeklyHours] = useState(profile?.weekly_hours?.toString() || "35");
   const [weeklyRestDays, setWeeklyRestDays] = useState(profile?.weekly_rest_days?.toString() || "2");
-  const [scheduleTemplate, setScheduleTemplate] = useState<ScheduleTemplate>(profile?.schedule_template || {});
+  const [workplaces, setWorkplaces] = useState<WorkplaceState[]>(
+    initialWorkplaces.map((w) => ({ id: w.id, name: w.name, schedule_template: w.schedule_template }))
+  );
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function addWorkplace() {
+    setWorkplaces((prev) => [...prev, { id: null, name: "", schedule_template: {} }]);
+  }
+
+  function updateWorkplace(index: number, updated: WorkplaceState) {
+    setWorkplaces((prev) => prev.map((w, i) => (i === index ? updated : w)));
+  }
+
+  function removeWorkplace(index: number) {
+    setWorkplaces((prev) => prev.filter((_, i) => i !== index));
+  }
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -45,21 +182,58 @@ export default function SettingsView({ profile, userId, email }: Props) {
     setSaved(false);
 
     const supabase = createClient();
+
+    // Save profile
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any).from("profiles").upsert({
+    const { error: profileError } = await (supabase as any).from("profiles").upsert({
       id: userId,
       first_name: firstName,
       last_name: lastName,
       contract_type: contractType,
       weekly_hours: parseFloat(weeklyHours) || 35,
       weekly_rest_days: parseInt(weeklyRestDays) || 2,
-      schedule_template: scheduleTemplate,
     });
 
+    if (profileError) {
+      setSaving(false);
+      setError("Erreur lors de la sauvegarde du profil.");
+      return;
+    }
+
+    // Save workplaces: upsert existing, insert new, delete removed
+    const existingIds = initialWorkplaces.map((w) => w.id);
+    const currentIds = workplaces.filter((w) => w.id).map((w) => w.id as string);
+    const deletedIds = existingIds.filter((id) => !currentIds.includes(id));
+
+    if (deletedIds.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from("workplaces").delete().in("id", deletedIds);
+    }
+
+    for (const w of workplaces) {
+      if (!w.name.trim()) continue;
+      if (w.id) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any).from("workplaces").update({
+          name: w.name,
+          schedule_template: w.schedule_template,
+        }).eq("id", w.id);
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any).from("workplaces").insert({
+          user_id: userId,
+          name: w.name,
+          schedule_template: w.schedule_template,
+        });
+      }
+    }
+
     setSaving(false);
-    if (error) { setError("Erreur lors de la sauvegarde."); return; }
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setTimeout(() => {
+      setSaved(false);
+      router.refresh();
+    }, 1500);
   }
 
   async function handleSignOut() {
@@ -90,33 +264,23 @@ export default function SettingsView({ profile, userId, email }: Props) {
           className="bg-white rounded-3xl p-5 border border-border/60 shadow-card"
         >
           <h2 className="text-sm font-semibold text-ink mb-4 uppercase tracking-widest">Identité</h2>
-          <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-ink">Prénom</Label>
-                <Input
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Lucas"
-                  className="h-12 bg-cream border-border rounded-xl text-ink"
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-ink">Nom</Label>
-                <Input
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Martin"
-                  className="h-12 bg-cream border-border rounded-xl text-ink"
-                />
-              </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm font-medium text-ink">Prénom</Label>
+              <Input
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="Lucas"
+                className="h-12 bg-cream border-border rounded-xl text-ink"
+              />
             </div>
             <div className="flex flex-col gap-2">
-              <Label className="text-sm font-medium text-ink">Email</Label>
+              <Label className="text-sm font-medium text-ink">Nom</Label>
               <Input
-                value={email}
-                disabled
-                className="h-12 bg-cream-dark border-border rounded-xl text-ink-muted cursor-not-allowed"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Martin"
+                className="h-12 bg-cream border-border rounded-xl text-ink"
               />
             </div>
           </div>
@@ -186,77 +350,28 @@ export default function SettingsView({ profile, userId, email }: Props) {
           </div>
         </motion.section>
 
-        {/* Planning type */}
-        <motion.section
+        {/* Workplaces */}
+        {workplaces.map((w, i) => (
+          <WorkplaceSection
+            key={w.id ?? `new-${i}`}
+            workplace={w}
+            index={i}
+            onChange={(updated) => updateWorkplace(i, updated)}
+            onDelete={() => removeWorkplace(i)}
+          />
+        ))}
+
+        {/* Add workplace */}
+        <motion.button
+          type="button"
+          onClick={addWorkplace}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.15 }}
-          className="bg-white rounded-3xl p-5 border border-border/60 shadow-card"
+          transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.2 }}
+          className="h-14 rounded-2xl border-2 border-dashed border-emerald/40 text-emerald font-medium text-sm hover:bg-emerald/5 transition-colors active:scale-[0.98]"
         >
-          <h2 className="text-sm font-semibold text-ink mb-1 uppercase tracking-widest">Planning type</h2>
-          <p className="text-xs text-ink-muted mb-4">Les heures sont pré-remplies à la saisie — modifiables à tout moment.</p>
-          <div className="flex flex-col gap-3">
-            {WEEK_DAYS.map(({ key, label }) => {
-              const active = !!scheduleTemplate[key];
-              return (
-                <div key={key} className="flex flex-col gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setScheduleTemplate(prev => {
-                        const next = { ...prev };
-                        if (next[key]) { delete next[key]; }
-                        else { next[key] = { start: "17:00", end: "23:30" }; }
-                        return next;
-                      });
-                    }}
-                    className={`flex items-center justify-between h-11 px-4 rounded-xl font-medium text-sm transition-all ${
-                      active
-                        ? "bg-emerald text-white"
-                        : "bg-cream border border-border text-ink-muted"
-                    }`}
-                  >
-                    <span>{label}</span>
-                    {active && scheduleTemplate[key] && (
-                      <span className="text-white/80 text-xs font-mono">
-                        {scheduleTemplate[key].start} – {scheduleTemplate[key].end}
-                      </span>
-                    )}
-                    {!active && <span className="text-ink-faint text-xs">Repos</span>}
-                  </button>
-                  {active && scheduleTemplate[key] && (
-                    <div className="flex gap-2 px-1">
-                      <div className="flex-1 flex flex-col gap-1">
-                        <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Début</span>
-                        <input
-                          type="time"
-                          value={scheduleTemplate[key].start}
-                          onChange={e => setScheduleTemplate(prev => ({
-                            ...prev,
-                            [key]: { ...prev[key], start: e.target.value }
-                          }))}
-                          className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
-                        />
-                      </div>
-                      <div className="flex-1 flex flex-col gap-1">
-                        <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Fin</span>
-                        <input
-                          type="time"
-                          value={scheduleTemplate[key].end}
-                          onChange={e => setScheduleTemplate(prev => ({
-                            ...prev,
-                            [key]: { ...prev[key], end: e.target.value }
-                          }))}
-                          className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </motion.section>
+          + Ajouter un restaurant
+        </motion.button>
 
         {error && (
           <p className="text-sm text-destructive bg-red-50 px-4 py-3 rounded-xl">{error}</p>
@@ -271,7 +386,7 @@ export default function SettingsView({ profile, userId, email }: Props) {
               : "bg-emerald text-white shadow-[0_8px_24px_rgba(15,81,50,0.25)] hover:bg-emerald-light"
           } disabled:opacity-60`}
         >
-          {saved ? "Sauvegardé" : saving ? "Enregistrement…" : "Enregistrer"}
+          {saved ? "Sauvegardé ✓" : saving ? "Enregistrement…" : "Enregistrer"}
         </button>
       </form>
 

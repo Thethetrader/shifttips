@@ -16,6 +16,14 @@ export interface Profile {
   created_at: string;
 }
 
+export interface Workplace {
+  id: string;
+  user_id: string;
+  name: string;
+  schedule_template: ScheduleTemplate;
+  created_at: string;
+}
+
 export interface Shift {
   id: string;
   user_id: string;

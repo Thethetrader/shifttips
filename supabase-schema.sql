@@ -55,6 +55,29 @@ create policy "Users can update own shifts"
 create policy "Users can delete own shifts"
   on shifts for delete using (auth.uid() = user_id);
 
+-- WORKPLACES
+create table if not exists workplaces (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users on delete cascade,
+  name text not null,
+  schedule_template jsonb default '{}',
+  created_at timestamptz default now()
+);
+
+alter table workplaces enable row level security;
+
+create policy "Users can view own workplaces"
+  on workplaces for select using (auth.uid() = user_id);
+
+create policy "Users can insert own workplaces"
+  on workplaces for insert with check (auth.uid() = user_id);
+
+create policy "Users can update own workplaces"
+  on workplaces for update using (auth.uid() = user_id);
+
+create policy "Users can delete own workplaces"
+  on workplaces for delete using (auth.uid() = user_id);
+
 -- Auto-create profile on signup
 create or replace function public.handle_new_user()
 returns trigger as $$
