@@ -78,6 +78,9 @@ create policy "Users can update own workplaces"
 create policy "Users can delete own workplaces"
   on workplaces for delete using (auth.uid() = user_id);
 
+-- Add workplace reference to shifts
+alter table shifts add column if not exists workplace_id uuid references workplaces(id) on delete set null;
+
 -- Auto-create profile on signup
 create or replace function public.handle_new_user()
 returns trigger as $$

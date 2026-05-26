@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
@@ -20,133 +20,16 @@ const WEEK_DAYS = [
   { key: "7", label: "Dim" },
 ];
 
-interface Props {
-  profile: Profile | null;
-  userId: string;
-  workplaces: Workplace[];
-}
-
 interface WorkplaceState {
   id: string | null;
   name: string;
   schedule_template: ScheduleTemplate;
 }
 
-function WorkplaceSection({
-  workplace,
-  onChange,
-  onDelete,
-  index,
-}: {
-  workplace: WorkplaceState;
-  onChange: (updated: WorkplaceState) => void;
-  onDelete: () => void;
-  index: number;
-}) {
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.05 * index }}
-      className="bg-white rounded-3xl p-5 border border-border/60 shadow-card"
-    >
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-ink uppercase tracking-widest">
-          Restaurant {index + 1}
-        </h2>
-        <button
-          type="button"
-          onClick={onDelete}
-          className="text-xs text-destructive hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
-        >
-          Supprimer
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-1 mb-4">
-        <Label className="text-sm font-medium text-ink">Nom du restaurant</Label>
-        <Input
-          value={workplace.name}
-          onChange={(e) => onChange({ ...workplace, name: e.target.value })}
-          placeholder="Ex : Chez Mario"
-          className="h-12 bg-cream border-border rounded-xl text-ink"
-        />
-      </div>
-
-      <p className="text-xs text-ink-muted mb-3">
-        Planning type — pré-rempli à la saisie, modifiable à tout moment.
-      </p>
-      <div className="flex flex-col gap-3">
-        {WEEK_DAYS.map(({ key, label }) => {
-          const active = !!workplace.schedule_template[key];
-          return (
-            <div key={key} className="flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  const next = { ...workplace.schedule_template };
-                  if (next[key]) { delete next[key]; }
-                  else { next[key] = { start: "17:00", end: "23:30" }; }
-                  onChange({ ...workplace, schedule_template: next });
-                }}
-                className={`flex items-center justify-between h-11 px-4 rounded-xl font-medium text-sm transition-all ${
-                  active
-                    ? "bg-emerald text-white"
-                    : "bg-cream border border-border text-ink-muted"
-                }`}
-              >
-                <span>{label}</span>
-                {active && workplace.schedule_template[key] && (
-                  <span className="text-white/80 text-xs font-mono">
-                    {workplace.schedule_template[key].start} – {workplace.schedule_template[key].end}
-                  </span>
-                )}
-                {!active && <span className="text-ink-faint text-xs">Repos</span>}
-              </button>
-              {active && workplace.schedule_template[key] && (
-                <div className="flex gap-2 px-1">
-                  <div className="flex-1 flex flex-col gap-1">
-                    <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Début</span>
-                    <input
-                      type="time"
-                      value={workplace.schedule_template[key].start}
-                      onChange={(e) =>
-                        onChange({
-                          ...workplace,
-                          schedule_template: {
-                            ...workplace.schedule_template,
-                            [key]: { ...workplace.schedule_template[key], start: e.target.value },
-                          },
-                        })
-                      }
-                      className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
-                    />
-                  </div>
-                  <div className="flex-1 flex flex-col gap-1">
-                    <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Fin</span>
-                    <input
-                      type="time"
-                      value={workplace.schedule_template[key].end}
-                      onChange={(e) =>
-                        onChange({
-                          ...workplace,
-                          schedule_template: {
-                            ...workplace.schedule_template,
-                            [key]: { ...workplace.schedule_template[key], end: e.target.value },
-                          },
-                        })
-                      }
-                      className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </motion.section>
-  );
+interface Props {
+  profile: Profile | null;
+  userId: string;
+  workplaces: Workplace[];
 }
 
 export default function SettingsView({ profile, userId, workplaces: initialWorkplaces }: Props) {
@@ -159,20 +42,31 @@ export default function SettingsView({ profile, userId, workplaces: initialWorkp
   const [workplaces, setWorkplaces] = useState<WorkplaceState[]>(
     initialWorkplaces.map((w) => ({ id: w.id, name: w.name, schedule_template: w.schedule_template }))
   );
+  const [activeTab, setActiveTab] = useState(0);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const mapped = initialWorkplaces.map((w) => ({ id: w.id, name: w.name, schedule_template: w.schedule_template }));
+    setWorkplaces(mapped);
+    setActiveTab(0);
+  }, [initialWorkplaces]);
+
   function addWorkplace() {
-    setWorkplaces((prev) => [...prev, { id: null, name: "", schedule_template: {} }]);
+    const next = [...workplaces, { id: null, name: "", schedule_template: {} }];
+    setWorkplaces(next);
+    setActiveTab(next.length - 1);
   }
 
-  function updateWorkplace(index: number, updated: WorkplaceState) {
-    setWorkplaces((prev) => prev.map((w, i) => (i === index ? updated : w)));
+  function updateActiveWorkplace(updated: Partial<WorkplaceState>) {
+    setWorkplaces((prev) => prev.map((w, i) => (i === activeTab ? { ...w, ...updated } : w)));
   }
 
-  function removeWorkplace(index: number) {
-    setWorkplaces((prev) => prev.filter((_, i) => i !== index));
+  function removeActiveWorkplace() {
+    const next = workplaces.filter((_, i) => i !== activeTab);
+    setWorkplaces(next);
+    setActiveTab(Math.max(0, activeTab - 1));
   }
 
   async function handleSave(e: React.FormEvent) {
@@ -183,7 +77,6 @@ export default function SettingsView({ profile, userId, workplaces: initialWorkp
 
     const supabase = createClient();
 
-    // Save profile
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: profileError } = await (supabase as any).from("profiles").upsert({
       id: userId,
@@ -200,7 +93,6 @@ export default function SettingsView({ profile, userId, workplaces: initialWorkp
       return;
     }
 
-    // Save workplaces: upsert existing, insert new, delete removed
     const existingIds = initialWorkplaces.map((w) => w.id);
     const currentIds = workplaces.filter((w) => w.id).map((w) => w.id as string);
     const deletedIds = existingIds.filter((id) => !currentIds.includes(id));
@@ -233,7 +125,7 @@ export default function SettingsView({ profile, userId, workplaces: initialWorkp
     setTimeout(() => {
       setSaved(false);
       router.refresh();
-    }, 1500);
+    }, 1200);
   }
 
   async function handleSignOut() {
@@ -242,6 +134,8 @@ export default function SettingsView({ profile, userId, workplaces: initialWorkp
     router.push("/");
     router.refresh();
   }
+
+  const active = workplaces[activeTab] ?? null;
 
   return (
     <div className="min-h-[100dvh] bg-cream px-4 pt-14 pb-8">
@@ -286,33 +180,31 @@ export default function SettingsView({ profile, userId, workplaces: initialWorkp
           </div>
         </motion.section>
 
-        {/* Contract */}
+        {/* Contrat + Planning type — same card */}
         <motion.section
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.1 }}
           className="bg-white rounded-3xl p-5 border border-border/60 shadow-card"
         >
+          {/* Contrat */}
           <h2 className="text-sm font-semibold text-ink mb-4 uppercase tracking-widest">Contrat</h2>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <Label className="text-sm font-medium text-ink">Type de contrat</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {CONTRACT_TYPES.map((type) => (
-                  <button
-                    key={type}
-                    type="button"
-                    onClick={() => setContractType(type)}
-                    className={`h-12 rounded-xl font-medium text-sm transition-all active:scale-95 ${
-                      contractType === type
-                        ? "bg-emerald text-white shadow-[0_4px_12px_rgba(15,81,50,0.25)]"
-                        : "bg-cream border border-border text-ink-muted hover:border-emerald/40"
-                    }`}
-                  >
-                    {type}
-                  </button>
-                ))}
-              </div>
+          <div className="flex flex-col gap-4 mb-5">
+            <div className="grid grid-cols-2 gap-2">
+              {CONTRACT_TYPES.map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setContractType(type)}
+                  className={`h-12 rounded-xl font-medium text-sm transition-all active:scale-95 ${
+                    contractType === type
+                      ? "bg-emerald text-white shadow-[0_4px_12px_rgba(15,81,50,0.25)]"
+                      : "bg-cream border border-border text-ink-muted hover:border-emerald/40"
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -348,30 +240,133 @@ export default function SettingsView({ profile, userId, workplaces: initialWorkp
               </div>
             </div>
           </div>
+
+          {/* Separator */}
+          <div className="border-t border-border/60 mb-5" />
+
+          {/* Planning type */}
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-ink uppercase tracking-widest">Planning type</h2>
+          </div>
+
+          {/* Restaurant tabs */}
+          <div className="flex items-center gap-2 flex-wrap mb-4">
+            {workplaces.map((w, i) => (
+              <button
+                key={w.id ?? `new-${i}`}
+                type="button"
+                onClick={() => setActiveTab(i)}
+                className={`h-8 px-3 rounded-lg text-xs font-semibold transition-all active:scale-95 ${
+                  activeTab === i
+                    ? "bg-emerald text-white"
+                    : "bg-cream border border-border text-ink-muted"
+                }`}
+              >
+                {w.name.trim() || `Resto ${i + 1}`}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={addWorkplace}
+              className="h-8 px-3 rounded-lg text-xs font-semibold bg-cream border border-dashed border-emerald/50 text-emerald transition-all hover:bg-emerald/5 active:scale-95"
+            >
+              + Ajouter
+            </button>
+          </div>
+
+          {/* Active restaurant content */}
+          {active ? (
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-2">
+                <Input
+                  value={active.name}
+                  onChange={(e) => updateActiveWorkplace({ name: e.target.value })}
+                  placeholder="Nom du restaurant"
+                  className="h-10 bg-cream border-border rounded-xl text-ink text-sm flex-1"
+                />
+                <button
+                  type="button"
+                  onClick={removeActiveWorkplace}
+                  className="h-10 px-3 text-xs text-destructive hover:bg-red-50 rounded-xl transition-colors flex-shrink-0"
+                >
+                  Suppr.
+                </button>
+              </div>
+
+              <p className="text-xs text-ink-muted">Horaires pré-remplis à la saisie — modifiables.</p>
+
+              <div className="flex flex-col gap-2">
+                {WEEK_DAYS.map(({ key, label }) => {
+                  const isActive = !!active.schedule_template[key];
+                  return (
+                    <div key={key} className="flex flex-col gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = { ...active.schedule_template };
+                          if (next[key]) { delete next[key]; }
+                          else { next[key] = { start: "17:00", end: "23:30" }; }
+                          updateActiveWorkplace({ schedule_template: next });
+                        }}
+                        className={`flex items-center justify-between h-11 px-4 rounded-xl font-medium text-sm transition-all ${
+                          isActive ? "bg-emerald text-white" : "bg-cream border border-border text-ink-muted"
+                        }`}
+                      >
+                        <span>{label}</span>
+                        {isActive && active.schedule_template[key] && (
+                          <span className="text-white/80 text-xs font-mono">
+                            {active.schedule_template[key].start} – {active.schedule_template[key].end}
+                          </span>
+                        )}
+                        {!isActive && <span className="text-ink-faint text-xs">Repos</span>}
+                      </button>
+                      {isActive && active.schedule_template[key] && (
+                        <div className="flex gap-2 px-1">
+                          <div className="flex-1 flex flex-col gap-1">
+                            <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Début</span>
+                            <input
+                              type="time"
+                              value={active.schedule_template[key].start}
+                              onChange={(e) =>
+                                updateActiveWorkplace({
+                                  schedule_template: {
+                                    ...active.schedule_template,
+                                    [key]: { ...active.schedule_template[key], start: e.target.value },
+                                  },
+                                })
+                              }
+                              className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
+                            />
+                          </div>
+                          <div className="flex-1 flex flex-col gap-1">
+                            <span className="text-[10px] text-ink-muted uppercase tracking-wider pl-1">Fin</span>
+                            <input
+                              type="time"
+                              value={active.schedule_template[key].end}
+                              onChange={(e) =>
+                                updateActiveWorkplace({
+                                  schedule_template: {
+                                    ...active.schedule_template,
+                                    [key]: { ...active.schedule_template[key], end: e.target.value },
+                                  },
+                                })
+                              }
+                              className="h-10 bg-cream border border-border rounded-xl text-ink text-sm px-3 focus:outline-none focus:border-emerald"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-ink-faint text-center py-4">
+              Clique sur &quot;+ Ajouter&quot; pour créer un restaurant
+            </p>
+          )}
         </motion.section>
-
-        {/* Workplaces */}
-        {workplaces.map((w, i) => (
-          <WorkplaceSection
-            key={w.id ?? `new-${i}`}
-            workplace={w}
-            index={i}
-            onChange={(updated) => updateWorkplace(i, updated)}
-            onDelete={() => removeWorkplace(i)}
-          />
-        ))}
-
-        {/* Add workplace */}
-        <motion.button
-          type="button"
-          onClick={addWorkplace}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.2 }}
-          className="h-14 rounded-2xl border-2 border-dashed border-emerald/40 text-emerald font-medium text-sm hover:bg-emerald/5 transition-colors active:scale-[0.98]"
-        >
-          + Ajouter un restaurant
-        </motion.button>
 
         {error && (
           <p className="text-sm text-destructive bg-red-50 px-4 py-3 rounded-xl">{error}</p>
@@ -390,7 +385,6 @@ export default function SettingsView({ profile, userId, workplaces: initialWorkp
         </button>
       </form>
 
-      {/* Sign out */}
       <div className="mt-8 pt-6 border-t border-border">
         <button
           onClick={handleSignOut}
@@ -400,7 +394,6 @@ export default function SettingsView({ profile, userId, workplaces: initialWorkp
         </button>
       </div>
 
-      {/* App footer */}
       <div className="mt-6 pt-4 border-t border-border/50 flex flex-col items-center gap-3">
         <p className="text-xs text-ink-faint">Shyftips · 100 % gratuit · v1.0</p>
         <div className="flex items-center gap-4 text-[11px] text-ink-faint">

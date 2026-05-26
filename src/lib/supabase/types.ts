@@ -33,5 +33,6 @@ export interface Shift {
   hours_worked: number;
   tips: number;
   note: string | null;
+  workplace_id: string | null;
   created_at: string;
 }

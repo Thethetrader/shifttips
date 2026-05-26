@@ -8,14 +8,14 @@ import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { Shift, ScheduleTemplate } from "@/lib/supabase/types";
+import type { Shift, Workplace } from "@/lib/supabase/types";
 import { getISODay } from "date-fns";
 
 interface Props {
   date: Date;
   existingShift?: Shift;
   userId: string;
-  scheduleTemplate?: ScheduleTemplate | null;
+  workplaces?: Workplace[];
   onSaved: (shift: Shift) => void;
   onDeleted: (date: string) => void;
   onClose: () => void;
@@ -34,14 +34,20 @@ function formatHM(h: number): string {
   return `${hrs}h${String(mins).padStart(2, "0")}`;
 }
 
-// Art. L3121-16 Code du travail + Convention HCR : pause de 30 min si > 6h de travail
 function legalPauseMinutes(rawHours: number): number {
   return rawHours > 6 ? 30 : 0;
 }
 
-export default function ShiftModal({ date, existingShift, userId, scheduleTemplate, onSaved, onDeleted, onClose }: Props) {
+export default function ShiftModal({ date, existingShift, userId, workplaces = [], onSaved, onDeleted, onClose }: Props) {
   const dayKey = String(getISODay(date));
-  const tpl = !existingShift ? (scheduleTemplate?.[dayKey] ?? null) : null;
+
+  const defaultWorkplaceId = existingShift?.workplace_id
+    ?? (workplaces.length === 1 ? workplaces[0].id : null);
+
+  const [selectedWorkplaceId, setSelectedWorkplaceId] = useState<string | null>(defaultWorkplaceId);
+
+  const selectedWorkplace = workplaces.find((w) => w.id === selectedWorkplaceId) ?? null;
+  const tpl = !existingShift ? (selectedWorkplace?.schedule_template?.[dayKey] ?? null) : null;
 
   const [startTime, setStartTime] = useState(existingShift?.start_time?.slice(0, 5) || tpl?.start || "09:00");
   const [endTime, setEndTime] = useState(existingShift?.end_time?.slice(0, 5) || tpl?.end || "17:00");
@@ -62,6 +68,18 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
   const pauseMin = legalPauseMinutes(rawHours);
   const netHours = Math.max(0, rawHours - pauseMin / 60);
 
+  function handleSelectWorkplace(id: string) {
+    setSelectedWorkplaceId(id);
+    if (!existingShift) {
+      const wp = workplaces.find((w) => w.id === id);
+      const t = wp?.schedule_template?.[dayKey] ?? null;
+      if (t) {
+        setStartTime(t.start);
+        setEndTime(t.end);
+      }
+    }
+  }
+
   async function handleSave() {
     if (netHours <= 0) {
       setError("La durée du service doit être supérieure à 0.");
@@ -77,6 +95,7 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
       hours_worked: netHours,
       tips: parseFloat(tips) || 0,
       note: note || null,
+      workplace_id: selectedWorkplaceId || null,
     };
 
     let data: Shift | null = null;
@@ -116,7 +135,6 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
 
   return (
     <>
-      {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -125,7 +143,6 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
         onClick={onClose}
       />
 
-      {/* Sheet */}
       <motion.div
         initial={{ y: "100%" }}
         animate={{ y: 0 }}
@@ -134,13 +151,12 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
         className="fixed bottom-0 left-0 right-0 z-50 bg-cream rounded-t-[2rem] pb-safe"
         style={{ maxHeight: "92dvh", overflowY: "auto" }}
       >
-        {/* Handle */}
         <div className="flex justify-center pt-3 pb-4">
           <div className="w-10 h-1 bg-border rounded-full" />
         </div>
 
         <div className="px-5 pb-8">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-5">
             <div>
               <h2 className="text-xl font-semibold text-ink tracking-tight capitalize">
                 {displayDate}
@@ -159,6 +175,29 @@ export default function ShiftModal({ date, existingShift, userId, scheduleTempla
               </button>
             )}
           </div>
+
+          {/* Restaurant selector */}
+          {workplaces.length > 0 && (
+            <div className="mb-5">
+              <p className="text-xs text-ink-muted mb-2 uppercase tracking-widest font-medium">Restaurant</p>
+              <div className="flex flex-wrap gap-2">
+                {workplaces.map((w) => (
+                  <button
+                    key={w.id}
+                    type="button"
+                    onClick={() => handleSelectWorkplace(w.id)}
+                    className={`h-9 px-4 rounded-xl text-sm font-medium transition-all active:scale-95 ${
+                      selectedWorkplaceId === w.id
+                        ? "bg-emerald text-white shadow-[0_4px_12px_rgba(15,81,50,0.2)]"
+                        : "bg-white border border-border text-ink-muted"
+                    }`}
+                  >
+                    {w.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {tpl && !existingShift && (
             <div className="bg-emerald/8 rounded-xl px-4 py-2.5 mb-4 flex items-center gap-2">

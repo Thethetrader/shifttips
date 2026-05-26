@@ -12,25 +12,18 @@ export default async function AppPage() {
   const firstDay = format(new Date(year, month, 1), "yyyy-MM-dd");
   const lastDay = format(new Date(year, month + 1, 0), "yyyy-MM-dd");
 
-  const { data: shifts } = await supabase
-    .from("shifts")
-    .select("*")
-    .eq("user_id", user!.id)
-    .gte("shift_date", firstDay)
-    .lte("shift_date", lastDay);
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("first_name, schedule_template")
-    .eq("id", user!.id)
-    .maybeSingle();
+  const [{ data: shifts }, { data: profile }, { data: workplaces }] = await Promise.all([
+    supabase.from("shifts").select("*").eq("user_id", user!.id).gte("shift_date", firstDay).lte("shift_date", lastDay),
+    supabase.from("profiles").select("first_name").eq("id", user!.id).maybeSingle(),
+    supabase.from("workplaces").select("*").eq("user_id", user!.id).order("created_at"),
+  ]);
 
   return (
     <CalendarView
       initialShifts={shifts || []}
       userId={user!.id}
       firstName={(profile as { first_name: string | null } | null)?.first_name || null}
-      scheduleTemplate={(profile as { schedule_template: Record<string, { start: string; end: string }> | null } | null)?.schedule_template || null}
+      workplaces={workplaces || []}
     />
   );
 }

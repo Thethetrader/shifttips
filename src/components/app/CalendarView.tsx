@@ -15,7 +15,7 @@ import {
 import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/client";
 import ShiftModal from "@/components/app/ShiftModal";
-import type { Shift, ScheduleTemplate } from "@/lib/supabase/types";
+import type { Shift, Workplace } from "@/lib/supabase/types";
 import { shiftsToDateMap, formatTips, formatHours } from "@/lib/calculations";
 
 const DAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
@@ -24,10 +24,10 @@ interface Props {
   initialShifts: Shift[];
   userId: string;
   firstName: string | null;
-  scheduleTemplate?: ScheduleTemplate | null;
+  workplaces: Workplace[];
 }
 
-export default function CalendarView({ initialShifts, userId, firstName, scheduleTemplate }: Props) {
+export default function CalendarView({ initialShifts, userId, firstName, workplaces }: Props) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [shifts, setShifts] = useState<Shift[]>(initialShifts);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -43,7 +43,6 @@ export default function CalendarView({ initialShifts, userId, firstName, schedul
   const monthEnd = endOfMonth(currentDate);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-  // Monday-first offset
   const startOffset = (getDay(monthStart) + 6) % 7;
 
   async function loadShifts(date: Date) {
@@ -101,6 +100,9 @@ export default function CalendarView({ initialShifts, userId, firstName, schedul
 
   const totalTips = shifts.reduce((sum, s) => sum + (s.tips || 0), 0);
   const totalHours = shifts.reduce((sum, s) => sum + (s.hours_worked || 0), 0);
+
+  // Find workplace name for a shift (for calendar dot color hint)
+  const workplaceMap = new Map(workplaces.map((w) => [w.id, w]));
 
   return (
     <div className="flex flex-col min-h-[100dvh] bg-cream">
@@ -160,7 +162,6 @@ export default function CalendarView({ initialShifts, userId, firstName, schedul
 
       {/* Calendar grid */}
       <div className="px-4 pb-4">
-        {/* Day headers */}
         <div className="grid grid-cols-7 mb-2">
           {DAYS.map((d) => (
             <div key={d} className="text-center text-[11px] font-medium text-ink-faint uppercase tracking-wider py-2">
@@ -169,7 +170,6 @@ export default function CalendarView({ initialShifts, userId, firstName, schedul
           ))}
         </div>
 
-        {/* Days grid */}
         <motion.div
           key={`${year}-${month}`}
           initial={{ opacity: 0, x: 10 }}
@@ -178,7 +178,6 @@ export default function CalendarView({ initialShifts, userId, firstName, schedul
           transition={{ type: "spring", stiffness: 200, damping: 25 }}
           className="grid grid-cols-7 gap-1.5"
         >
-          {/* Empty cells for offset */}
           {Array.from({ length: startOffset }).map((_, i) => (
             <div key={`empty-${i}`} />
           ))}
@@ -187,6 +186,7 @@ export default function CalendarView({ initialShifts, userId, firstName, schedul
             const dateStr = format(day, "yyyy-MM-dd");
             const shift = shiftMap.get(dateStr);
             const today = isToday(day);
+            const wp = shift?.workplace_id ? workplaceMap.get(shift.workplace_id) : null;
 
             return (
               <button
@@ -216,6 +216,11 @@ export default function CalendarView({ initialShifts, userId, firstName, schedul
                         {shift.tips}€
                       </span>
                     )}
+                    {wp && (
+                      <span className="text-[8px] text-emerald-600 leading-none max-w-[40px] truncate">
+                        {wp.name}
+                      </span>
+                    )}
                   </div>
                 )}
               </button>
@@ -230,7 +235,7 @@ export default function CalendarView({ initialShifts, userId, firstName, schedul
         )}
       </div>
 
-      {/* FAB — saisir aujourd'hui */}
+      {/* FAB */}
       <button
         onClick={() => openDay(new Date())}
         className="fixed bottom-24 right-4 z-30 w-14 h-14 bg-emerald text-white rounded-2xl shadow-[0_8px_24px_rgba(15,81,50,0.35)] flex items-center justify-center active:scale-95 transition-transform"
@@ -241,14 +246,13 @@ export default function CalendarView({ initialShifts, userId, firstName, schedul
         </svg>
       </button>
 
-      {/* Modal */}
       <AnimatePresence>
         {modalOpen && selectedDate && (
           <ShiftModal
             date={selectedDate}
             existingShift={selectedShift}
             userId={userId}
-            scheduleTemplate={scheduleTemplate}
+            workplaces={workplaces}
             onSaved={handleShiftSaved}
             onDeleted={handleShiftDeleted}
             onClose={() => setModalOpen(false)}

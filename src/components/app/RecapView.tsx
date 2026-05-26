@@ -14,7 +14,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import type { Shift } from "@/lib/supabase/types";
+import type { Shift, Workplace } from "@/lib/supabase/types";
 import {
   calcTotalHours,
   calcTotalTips,
@@ -32,6 +32,7 @@ interface Props {
   ytdShifts: Pick<Shift, "tips">[];
   profile: { weekly_hours: number; weekly_rest_days: number; contract_type: string | null; first_name?: string | null; last_name?: string | null };
   currentMonth: Date;
+  workplaces?: Workplace[];
 }
 
 function StatCard({
@@ -326,12 +327,26 @@ function ExportSheet({
   );
 }
 
-export default function RecapView({ shifts, prevShifts, ytdShifts, profile, currentMonth }: Props) {
+export default function RecapView({ shifts, prevShifts, ytdShifts, profile, currentMonth, workplaces = [] }: Props) {
   const router = useRouter();
   const [exportOpen, setExportOpen] = useState(false);
   const [previewHTML, setPreviewHTML] = useState<string | null>(null);
+  const [filterWorkplaceId, setFilterWorkplaceId] = useState<string | null>(null);
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
+
+  const filteredShifts = filterWorkplaceId
+    ? shifts.filter((s) => s.workplace_id === filterWorkplaceId)
+    : shifts;
+  const filteredPrevShifts = filterWorkplaceId
+    ? prevShifts.filter((s) => s.workplace_id === filterWorkplaceId)
+    : prevShifts;
+  const filteredYtdShifts = filterWorkplaceId
+    ? ytdShifts.filter((s) => (s as Shift).workplace_id === filterWorkplaceId)
+    : ytdShifts;
+  const selectedWorkplaceName = filterWorkplaceId
+    ? (workplaces.find((w) => w.id === filterWorkplaceId)?.name ?? "")
+    : "";
 
   const goToMonth = (date: Date) => {
     router.push(`/app/recap?month=${format(date, "yyyy-MM")}`);
@@ -339,27 +354,27 @@ export default function RecapView({ shifts, prevShifts, ytdShifts, profile, curr
 
   const isCurrentMonth = format(currentMonth, "yyyy-MM") === format(new Date(), "yyyy-MM");
 
-  const totalHours = calcTotalHours(shifts);
-  const totalTips = calcTotalTips(shifts);
-  const prevTotalHours = calcTotalHours(prevShifts);
-  const prevTotalTips = calcTotalTips(prevShifts);
+  const totalHours = calcTotalHours(filteredShifts);
+  const totalTips = calcTotalTips(filteredShifts);
+  const prevTotalHours = calcTotalHours(filteredPrevShifts);
+  const prevTotalTips = calcTotalTips(filteredPrevShifts);
 
   const overtimeHours = calcOvertimeHours(totalHours, profile.weekly_hours);
   const daysInMonth = getDaysInMonth(currentMonth);
   const theoreticalRestDays = calcTheoreticalRestDays(profile.weekly_rest_days, daysInMonth);
-  const workedDays = shifts.length;
+  const workedDays = filteredShifts.length;
   const restTaken = daysInMonth - workedDays;
 
   const tipsChange = calcChangePercent(totalTips, prevTotalTips);
   const hoursChange = calcChangePercent(totalHours, prevTotalHours);
-  const ytdTips = ytdShifts.reduce((sum, s) => sum + (s.tips || 0), 0);
+  const ytdTips = filteredYtdShifts.reduce((sum, s) => sum + (s.tips || 0), 0);
 
   const plannedHours = monthlyContractHours(profile.weekly_hours);
 
   const chartData = Array.from({ length: daysInMonth }, (_, i) => {
     const d = i + 1;
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-    const shift = shifts.find((s) => s.shift_date === dateStr);
+    const shift = filteredShifts.find((s) => s.shift_date === dateStr);
     return { day: d, tips: shift?.tips || 0, worked: !!shift };
   });
 
@@ -394,6 +409,35 @@ export default function RecapView({ shifts, prevShifts, ytdShifts, profile, curr
           </button>
         </div>
       </motion.div>
+
+      {/* Workplace filter */}
+      {workplaces.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-5">
+          <button
+            onClick={() => setFilterWorkplaceId(null)}
+            className={`h-8 px-3 rounded-lg text-xs font-semibold transition-all active:scale-95 ${
+              filterWorkplaceId === null
+                ? "bg-ink text-white"
+                : "bg-white border border-border text-ink-muted"
+            }`}
+          >
+            Tous
+          </button>
+          {workplaces.map((w) => (
+            <button
+              key={w.id}
+              onClick={() => setFilterWorkplaceId(w.id)}
+              className={`h-8 px-3 rounded-lg text-xs font-semibold transition-all active:scale-95 ${
+                filterWorkplaceId === w.id
+                  ? "bg-emerald text-white"
+                  : "bg-white border border-border text-ink-muted"
+              }`}
+            >
+              {w.name}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 gap-3 mb-6">
@@ -553,10 +597,10 @@ export default function RecapView({ shifts, prevShifts, ytdShifts, profile, curr
         {exportOpen && (
           <ExportSheet
             onClose={() => setExportOpen(false)}
-            defaultName=""
+            defaultName={selectedWorkplaceName}
             onExport={(restaurant) => {
               setExportOpen(false);
-              const html = generateHTML(shifts, profile, restaurant, currentMonth);
+              const html = generateHTML(filteredShifts, profile, restaurant, currentMonth);
               setPreviewHTML(html);
             }}
           />
